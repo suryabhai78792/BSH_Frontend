@@ -254,6 +254,21 @@ return (
   
 
 
+
+  {/* बीच/दाहिना हिस्सा: स्क्रीन मोड स्टेटस (नया जोड़ा गया कोड) */}
+  <div className="flex items-center gap-2 px-3 py-1 bg-gray-100 rounded-full text-xs font-semibold text-gray-700">
+    {/* मोबाइल पोर्ट्रेट व्यू (केवल मोबाइल और जब स्क्रीन पोर्ट्रेट हो) */}
+    <span className="block md:hidden landscape:hidden">मोबाइल पोर्ट्रेट व्यू</span>
+
+    {/* मोबाइल लैंडस्केप व्यू (केवल मोबाइल और जब स्क्रीन लैंडस्केप हो) */}
+    <span className="hidden landscape:max-lg:inline">मोबाइल लैंडस्केप व्यू</span>
+
+    {/* डेस्कटॉप मोड (केवल लैपटॉप/कंप्यूटर स्क्रीन पर) */}
+    <span className="hidden lg:inline">डेस्कटॉप मोड</span>
+  </div>
+
+
+
   {/* 2. दूसरा 'main' हटाकर सीधे DashboardView रखें */}
   <div> 
     {activeTab === 'dashboard' && <DashboardView data={databaseData} viewMode={viewMode} />}
