@@ -203,17 +203,6 @@ const MONTHS_LIST = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Se
 return (
 <div className="h-screen flex flex-col bg-gray-50 overflow-hidden">
     
-    {/* हेडर जिसमें आपका स्टेटस दिखता है */}
-    <header className="...">
-      {/* ... आपका हेडर कोड ... */}
-      <div className="flex items-center gap-2 px-3 py-1 bg-gray-100 rounded-full text-xs font-semibold text-gray-700">
-        {deviceStatus === 'mobile-portrait' && <span>मोबाइल पोर्ट्रेट व्यू</span>}
-        {deviceStatus === 'mobile-landscape' && <span>मोबाइल लैंडस्केप व्यू</span>}
-        {deviceStatus === 'tablet' && <span>टैबलेट व्यू</span>}
-        {deviceStatus === 'desktop' && <span>डेस्कटॉप मोड y</span>}
-      </div>
-    </header>
-
     {/* मुख्य कंटेंट जहाँ आप अलग-अलग लेआउट रेंडर करेंगे */}
     <div className="flex-1 overflow-hidden">
 {/*=========================================================================================================*/}
@@ -267,7 +256,7 @@ return (
 
 
         {/* 1. हेडर (फिक्स्ड रहेगा) */}
-  <header className="bg-white  p-6 border-b border-gray-300 flex-shrink-0 flex items-center justify-between">
+  <header className="bg-white pt-3 pb-3 p-6 border-b border-gray-300 flex-shrink-0 flex items-center justify-between">
     
     {/* बायां हिस्सा: टाइटल */}
     <h1 className="text-2xl font-bold text-blue-600">Finance Tracker</h1>

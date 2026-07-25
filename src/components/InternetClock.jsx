@@ -29,7 +29,7 @@ export default function InternetClock() {
   });
 
   return (
-    <div className="flex items-center gap-3 bg-white px-4 py-2 rounded-xl border border-gray-200 shadow-sm">
+    <div className="flex items-center gap-3 bg-white p-4 py-1 rounded-xl border border-gray-200 shadow-sm">
       {/* ग्रीन इंडिकेटर डॉट */}
       <span className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"></span>
 
