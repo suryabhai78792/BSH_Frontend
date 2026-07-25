@@ -304,6 +304,11 @@ const { tableData: convertedTableData } = convertDataByMode(data, viewMode, 'inc
           <header className="fixed top-0 left-0 right-0 z-50 bg-white py-3 px-6 border-b border-gray-300 flex items-center justify-between ">
             
             {/* बायां हिस्सा: टाइटल */}
+            {/* यूजर आइकॉन */}
+            <div className="bg-gray-200 p-2 rounded-full cursor-pointer">
+              <User className="text-gray-600" size={20} />
+            </div>
+
             {/* तारीख और महीना (अक्षरों में) */}
             <div className="text-sm font-medium text-gray-600 border-r pr-3 border-gray-200">
               {formattedDate}
@@ -313,15 +318,9 @@ const { tableData: convertedTableData } = convertDataByMode(data, viewMode, 'inc
               {formattedTime}
             </div>
             {/* दाहिना हिस्सा: बेल और यूजर आइकॉन */}
-            <div className="flex items-center gap-4">
-          
+            <div className="flex items-center gap-4">         
               {/* बेल आइकॉन (Lucide-react से Bell इम्पोर्ट करना न भूलें) */}
               <Bell className="text-gray-500 cursor-pointer" size={24} />
-              
-              {/* यूजर आइकॉन */}
-              <div className="bg-gray-200 p-2 rounded-full cursor-pointer">
-                <User className="text-gray-600" size={20} />
-              </div>
             </div>
             
           </header>
