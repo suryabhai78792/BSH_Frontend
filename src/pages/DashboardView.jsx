@@ -2,6 +2,7 @@ import React from 'react';
 import Chart from 'chart.js/auto' // Chart.js को इम्पोर्ट किया
 import './DashboardView.css'
 import StatsCard from '../components/StatsCard';
+import { useDeviceView } from '../components/useDeviceView';
 import { convertDataByMode } from '../components/dataConverter';
 import ReusableTable from '../components/ReusableTable';
 import { PieChart, Pie, Cell, ResponsiveContainer,Legend, Tooltip, LabelList } from 'recharts';
@@ -25,7 +26,7 @@ const originalLoanData = [
 const COLORS = ['#F59E0B', '#10B981', '#3B82F6', '#EF4444'];
 
 const DashboardView = ({ data, viewMode }) => {
-
+const deviceView = useDeviceView();
 const [pieData, setPieData] = useState(originalPieData);
 const [loanData, setLoanData] = useState(originalLoanData);
 const { tableData: convertedTableData } = convertDataByMode(data, viewMode, 'income');
@@ -292,6 +293,39 @@ const { tableData: convertedTableData } = convertDataByMode(data, viewMode, 'inc
 
   return (
    <div >
+{/*=========================================================================================================*/}
+      {/* 1. मोबाइल पोर्ट्रेट व्यू के लिए लेआउट */}
+{/*=========================================================================================================*/}      
+      {deviceView === 'mobile-portrait' && (
+        <StatsCard income={income} expense={expense} budget={budget} savings={savings} loan={loan} />
+
+
+      )}
+
+{/*=========================================================================================================*/}
+      {/* 2. मोबाइल लैंडस्केप व्यू के लिए लेआउट */}
+{/*=========================================================================================================*/}
+      {deviceView === 'mobile-landscape' && (
+        <div className="h-full p-4 bg-blue-50 overflow-y-auto">
+          <h2 className="text-lg font-bold text-blue-600">मोबाइल लैंडस्केप लेआउट</h2>
+          {/* यहाँ मोबाइल लैंडस्केप के लिए अलग कोडिंग/क्लास लिखें */}
+        </div>
+      )}
+
+
+{/*=========================================================================================================*/}
+      {/* 3. टैबलेट व्यू (या डेस्कटॉप साइट ऑन + पोर्ट्रेट) के लिए लेआउट */}
+{/*=========================================================================================================*/}     
+      {deviceView === 'tablet' && (
+        <div className="h-full p-6 bg-yellow-50 overflow-y-auto">
+          <h2 className="text-xl font-bold text-yellow-600">टैबलेट व्यू लेआउट</h2>
+          {/* यहाँ टैबलेट के लिए 2-कॉलम वाला लेआउट सेट कर सकते हैं */}
+          <div className="grid grid-cols-2 gap-4">
+            {/* टैबलेट का कंटेंट */}
+          </div>
+        </div>
+      )}
+
   {/* 1. केवल एक बार StatsCard कॉल करें */}
   <StatsCard income={income} expense={expense} budget={budget} savings={savings} loan={loan} />
     <div className=" rounded-xl mb-5" >

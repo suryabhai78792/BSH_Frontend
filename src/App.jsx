@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 
 import './App.css'
 import InternetClock from './components/InternetClock';
+import { useDeviceView } from './components/useDeviceView';
 import { convertDataByMode } from './components/dataConverter';
 import MyButton from './components/MyButton';
 import DashboardView from './pages/DashboardView';
@@ -17,7 +18,7 @@ const MONTHS_LIST = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Se
 
  // स्टेट्स (States)
 
-
+  const deviceView = useDeviceView();
   const [databaseData, setDatabaseData] = useState({});
   const [showModal, setShowModal] = useState(false);
   const latestDataRef = useRef({}) // 🔥 लेटेस्ट डेटा को बिना री-रेंडर ट्रैक करने के लिए
@@ -43,70 +44,7 @@ const MONTHS_LIST = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Se
   const SAVE_DATA_URL = 'https://my-income-backend.onrender.com/save'
 
 
-// यह पता लगाने के लिए कि क्या डिवाइस सच में डेस्कटॉप है या मोबाइल में डेस्कटॉप मोड है
-    const [deviceStatus, setDeviceStatus] = useState(() => {
-    const width = window.innerWidth;
-    const height = window.innerHeight;
-    const isLandscape = width > height;
-    const ua = navigator.userAgent;
-    const isDesktopSite = !/Android.*Mobile|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua) && (ua.includes('Macintosh') || ua.includes('Windows') || ua.includes('X11') || width >= 768);
-    
-    if (width >= 1024 && !/Android|webOS|iPhone|iPad|iPod/i.test(ua)) {
-      return 'desktop';
-    }
-    if (isDesktopSite) {
-      return isLandscape ? 'desktop' : 'tablet'; // अगर डेस्कटॉप साइट ऑन है और पोर्ट्रेट है तो टैबलेट व्यू
-    }
-    return isLandscape ? 'mobile-landscape' : 'mobile-portrait';
-  });
 
-  // 2. useEffect को अपडेट करें
-  useEffect(() => {
-    const updateDeviceStatus = () => {
-      const width = window.innerWidth;
-      const height = window.innerHeight;
-      const isLandscape = width > height;
-      const ua = navigator.userAgent;
-
-
-      // असली डेस्कटॉप या लैपटॉप
-      if (width >= 1024 && !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-        setDeviceStatus('desktop');
-        return;
-      }
-
-      // मोबाइल में "Desktop Site" ऑन होने पर चेक करें
-      const isDesktopSiteActive = !/Android.*Mobile|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua) && (ua.includes('Macintosh') || ua.includes('Windows') || ua.includes('X11') || width >= 768);
-
-      if (isDesktopSiteActive) {
-        if (isLandscape) {
-          setDeviceStatus('desktop');
-          // 🔥 मोबाइल के लैंडस्केप मॉड में जूम आउट करके कंटेंट सही दिखाने के लिए (मोबाइल का डेस्कटॉप मोड)
-          document.body.style.zoom = "0.60"; // आप इसे 0.7 या 0.8 अपनी जरूरत के हिसाब से रख सकते हैं
-          document.body.style.width = "100%"; // इसमें चौड़ाई को बढ़ाने की भी जरूरत नहीं पड़ेगी
-          } else {
-            setDeviceStatus('tablet'); // <--- यहाँ टैबलेट व्यू सेट होगा
-          }
-          return;
-        }
-
-      // सामान्य मोबाइल व्यू (जब डेस्कटॉप साइट ऑफ हो)
-      if (isLandscape) {
-        setDeviceStatus('mobile-landscape');
-      } else {
-        setDeviceStatus('mobile-portrait');
-      }
-    };
-
-    updateDeviceStatus();
-    window.addEventListener('resize', updateDeviceStatus);
-    window.addEventListener('orientationchange', updateDeviceStatus);
-
-    return () => {
-      window.removeEventListener('resize', updateDeviceStatus);
-      window.removeEventListener('orientationchange', updateDeviceStatus);
-    };
-  }, []);
 
   // API: Load Table Data
   const loadTableData = () => {
@@ -206,21 +144,29 @@ return (
 {/*=========================================================================================================*/}
       {/* 1. मोबाइल पोर्ट्रेट व्यू के लिए लेआउट */}
 {/*=========================================================================================================*/}      
-      {deviceStatus === 'mobile-portrait' && (
-        <div className="h-full p-4 bg-white overflow-y-auto">
-          <h2 className="text-lg font-bold text-red-600">मोबाइल पोर्ट्रेट लेआउट</h2>
-          {/* यहाँ मोबाइल पोर्ट्रेट के लिए अलग कोडिंग/क्लास लिखें */}
-          <div className="grid grid-cols-1 gap-4">
-            {/* उदाहरण के लिए सिंगल कॉलम */}
-          </div>
+      {deviceView === 'mobile-portrait' && (
+
+        <div className="min-h-screen pb-20 bg-white overflow-y-auto">
+          
+          {/* मोबाइल पोर्ट्रेट का मुख्य कंटेंट यहाँ दिखेगा */}
+          <main className="p-4">
+            {activeTab === 'dashboard' && <DashboardView data={databaseData} viewMode={viewMode} />}
+            {activeTab === 'transactions' && <TransactionsView data={databaseData} />}
+            {activeTab === 'loanManager' && <LoanManager />}
+          </main>
+
+          {/* 🔥 यहाँ हमने नीचे फिक्स नेविगेशन बार को इम्पोर्ट करके लगा दिया है */}
+          <MobileNavbar activeTab={activeTab} setActiveTab={setActiveTab} />
+          
         </div>
+
       )}
 
 
 {/*=========================================================================================================*/}
       {/* 2. मोबाइल लैंडस्केप व्यू के लिए लेआउट */}
 {/*=========================================================================================================*/}
-      {deviceStatus === 'mobile-landscape' && (
+      {deviceView === 'mobile-landscape' && (
         <div className="h-full p-4 bg-blue-50 overflow-y-auto">
           <h2 className="text-lg font-bold text-blue-600">मोबाइल लैंडस्केप लेआउट</h2>
           {/* यहाँ मोबाइल लैंडस्केप के लिए अलग कोडिंग/क्लास लिखें */}
@@ -231,7 +177,7 @@ return (
 {/*=========================================================================================================*/}
       {/* 3. टैबलेट व्यू (या डेस्कटॉप साइट ऑन + पोर्ट्रेट) के लिए लेआउट */}
 {/*=========================================================================================================*/}     
-      {deviceStatus === 'tablet' && (
+      {deviceView === 'tablet' && (
         <div className="h-full p-6 bg-yellow-50 overflow-y-auto">
           <h2 className="text-xl font-bold text-yellow-600">टैबलेट व्यू लेआउट</h2>
           {/* यहाँ टैबलेट के लिए 2-कॉलम वाला लेआउट सेट कर सकते हैं */}
@@ -246,7 +192,7 @@ return (
 {/*=========================================================================================================*/}
       {/* 4. डेस्कटॉप मोड (या लैपटॉप और मोबाइल में डेस्कटॉप साइट + लैंडस्केप) के लिए लेआउट */}
 {/*=========================================================================================================*/}   
-      {deviceStatus === 'desktop' && (
+      {deviceView === 'desktop' && (
     
       // पूरे पेज को एक फिक्स्ड हाइट दें ताकि बाहर वाला स्क्रोल बार न आए
       <div className="minh-screen flex flex-col bg-gray-50">
@@ -257,7 +203,7 @@ return (
   <header className="bg-white pt-3 pb-3 p-6 border-b border-gray-300 flex-shrink-0 flex items-center justify-between">
     
     {/* बायां हिस्सा: टाइटल */}
-    <h1 className="text-2xl font-bold text-blue-600">Finance Tracker h</h1>
+    <h1 className="text-2xl font-bold text-blue-600">Finance Tracker</h1>
 
     {/* दाहिना हिस्सा: बेल और यूजर आइकॉन */}
     <div className="flex items-center gap-4">
@@ -332,7 +278,7 @@ return (
               <Receipt size={20}/> Transactions
             </div>
             <div     
-              className={`cursor-pointer flex items-center gap-3 ${activeTab === 'transactions' ? 'text-blue-600 font-bold' : 'text-gray-600'}`} 
+              className={`cursor-pointer flex items-center gap-3 ${activeTab === 'loanManager' ? 'text-blue-600 font-bold' : 'text-gray-600'}`} 
               onClick={() => setActiveTab('loanManager')}
             >
               <CreditCard size={20} />
