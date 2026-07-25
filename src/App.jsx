@@ -48,19 +48,18 @@ const MONTHS_LIST = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Se
 useEffect(() => {
     const updateDeviceStatus = () => {
       const width = window.innerWidth;
-      // चेक करें कि क्या यूजर का ब्राउज़र मोबाइल/टैबलेट का है या नहीं
+      const height = window.innerHeight;
       const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
       
-      // अगर मोबाइल यूजर-एजेंट है और स्क्रीन की चौड़ाई डेस्कटॉप जितनी बड़ी नहीं है (यानी मोबाइल व्यू है)
-      // लेकिन अगर ब्राउज़र में "Desktop Site" चेक किया हुआ है, तो अक्सर screen.width बड़ा हो जाता है या UA बदल जाता है
-      const isDesktopSiteEnabled = isMobileUA && (width >= 1024 || window.screen.width >= 1024);
+      // डेस्कटॉप साइट डिटेक्शन: यदि यूजर-एजेंट मोबाइल है, लेकिन लैंडस्केप मोड में चौड़ाई बहुत ज्यादा है 
+      // या यूजर ने डेस्कटॉप मोड इनेबल किया है (जहाँ स्क्रीन की प्रभावी चौड़ाई डेस्कटॉप जैसी हो जाती है)
+      const isDesktopSite = isMobileUA && (width >= 1024 || (window.matchMedia("(orientation: landscape)").matches && width > 900));
 
       if (!isMobileUA && width >= 1024) {
-        setDeviceStatus('desktop'); // असली डेस्कटॉप/लैपटॉप
-      } else if (isDesktopSiteEnabled) {
-        setDeviceStatus('desktop'); // मोबाइल में डेस्कटॉप साइट ऑन है
+        setDeviceStatus('desktop');
+      } else if (isDesktopSite) {
+        setDeviceStatus('desktop'); // एक बार डेस्कटॉप साइट डिटेक्ट होने पर इसे हमेशा डेस्कटॉप रखें
       } else {
-        // सामान्य मोबाइल व्यू
         const isLandscape = window.matchMedia("(orientation: landscape)").matches;
         if (isLandscape) {
           setDeviceStatus('mobile-landscape');
