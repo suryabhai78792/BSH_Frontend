@@ -264,7 +264,7 @@ return (
     <span className="hidden landscape:max-lg:inline">मोबाइल लैंडस्केप व्यू</span>
 
     {/* डेस्कटॉप मोड (केवल लैपटॉप/कंप्यूटर स्क्रीन पर) */}
-    <span className="hidden lg:inline">डेस्कटॉप मोड</span>
+    <span className="hidden md:block">डेस्कटॉप मोड</span>
   </div>
 
 
