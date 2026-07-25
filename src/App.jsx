@@ -210,8 +210,9 @@ return (
 
     {/* मुख्य कंटेंट जहाँ आप अलग-अलग लेआउट रेंडर करेंगे */}
     <div className="flex-1 overflow-hidden">
-
+=========================================================================================================
       {/* 1. मोबाइल पोर्ट्रेट व्यू के लिए लेआउट */}
+=========================================================================================================      
       {deviceStatus === 'mobile-portrait' && (
         <div className="h-full p-4 bg-white overflow-y-auto">
           <h2 className="text-lg font-bold text-red-600">मोबाइल पोर्ट्रेट लेआउट</h2>
@@ -222,7 +223,10 @@ return (
         </div>
       )}
 
+
+=========================================================================================================
       {/* 2. मोबाइल लैंडस्केप व्यू के लिए लेआउट */}
+=========================================================================================================
       {deviceStatus === 'mobile-landscape' && (
         <div className="h-full p-4 bg-blue-50 overflow-y-auto">
           <h2 className="text-lg font-bold text-blue-600">मोबाइल लैंडस्केप लेआउट</h2>
@@ -230,7 +234,10 @@ return (
         </div>
       )}
 
+
+=========================================================================================================
       {/* 3. टैबलेट व्यू (या डेस्कटॉप साइट ऑन + पोर्ट्रेट) के लिए लेआउट */}
+=========================================================================================================      
       {deviceStatus === 'tablet' && (
         <div className="h-full p-6 bg-yellow-50 overflow-y-auto">
           <h2 className="text-xl font-bold text-yellow-600">टैबलेट व्यू लेआउट</h2>
@@ -241,7 +248,11 @@ return (
         </div>
       )}
 
+
+
+=========================================================================================================
       {/* 4. डेस्कटॉप मोड (या लैपटॉप और मोबाइल में डेस्कटॉप साइट + लैंडस्केप) के लिए लेआउट */}
+=========================================================================================================     
       {deviceStatus === 'desktop' && (
 
 
@@ -253,7 +264,6 @@ return (
   <header className="bg-white  p-6 border-b border-gray-300 flex-shrink-0 flex items-center justify-between">
     
     {/* बायां हिस्सा: टाइटल */}
-    <Menu className="cursor-pointer lg:hidden max-md:landscape:hidden" onClick={() => setIsSidebarOpen(true)} />
     <h1 className="text-2xl font-bold text-blue-600">Finance Tracker</h1>
 
     {/* दाहिना हिस्सा: बेल और यूजर आइकॉन */}
@@ -277,19 +287,9 @@ return (
         <div className="flex flex-1 overflow-hidden">
           
           {/* साइडबार */}
-  <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-300 p-6 
-    transform transition-transform duration-300 ease-in-out 
-    ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} 
-    lg:translate-x-0 lg:relative lg:block max-md:landscape:block hidden md:block`}> 
-      
-      {/* क्लोज बटन केवल मोबाइल के लिए */}
-      <div className="flex justify-between items-center max-md:landscape:hidden mb-6 lg:hidden">
-        <span className="font-bold">Menu</span>
-        <X className="cursor-pointer" onClick={() => setIsSidebarOpen(false)} />
-      </div>
-        
-            {/* ... आपका साइडबार कोड यहाँ रहेगा ... */}
+  <div className="w-64 bg-white border-r border-gray-300 p-6 flex-shrink-0 h-full">
 
+            {/* ... आपका साइडबार कोड यहाँ रहेगा ... */}
 
           <button className="w-full bg-blue-600 text-white rounded-lg py-2 mb-6 flex items-center justify-center gap-2" onClick={() => setShowModal(true)}>
             <Plus size={20} /> Add Transaction 
@@ -363,21 +363,6 @@ return (
 
   {/* मुख्य कंटेंट क्षेत्र */}
   <main className="flex-1 overflow-y-auto p-2 mb-0 lg:p-8">
-    
-
-
-
-  {/* स्क्रीन मोड स्टेटस */}
-  <div className="flex items-center gap-2 px-3 py-1 bg-gray-100 rounded-full text-xs font-semibold text-gray-700">
-    
-    {deviceStatus === 'mobile-portrait' && <span>मोबाइल पोर्ट्रेट व्यू</span>}
-    {deviceStatus === 'mobile-landscape' && <span>मोबाइल लैंडस्केप व्यू</span>}
-    {deviceStatus === 'tablet' && <span>टैबलेट व्यू</span>}
-    {deviceStatus === 'desktop' && <span>डेस्कटॉप मोड p</span>}
-
-  </div>
-
-
 
     {/* 2. दूसरा 'main' हटाकर सीधे DashboardView रखें */}
     <div> 
@@ -449,6 +434,7 @@ return (
 
 
         )}
+===============================================================================================================        
 
       </div>
     </div>
