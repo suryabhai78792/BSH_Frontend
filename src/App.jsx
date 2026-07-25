@@ -17,8 +17,7 @@ const MONTHS_LIST = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Se
 
  // स्टेट्स (States)
 
-// यह पता लगाने के लिए कि क्या डिवाइस सच में डेस्कटॉप है या मोबाइल में डेस्कटॉप मोड है
-  const [deviceStatus, setDeviceStatus] = useState('desktop');
+
   const [databaseData, setDatabaseData] = useState({});
   const [showModal, setShowModal] = useState(false);
   const latestDataRef = useRef({}) // 🔥 लेटेस्ट डेटा को बिना री-रेंडर ट्रैक करने के लिए
@@ -44,32 +43,47 @@ const MONTHS_LIST = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Se
   const SAVE_DATA_URL = 'https://my-income-backend.onrender.com/save'
 
 
+// यह पता लगाने के लिए कि क्या डिवाइस सच में डेस्कटॉप है या मोबाइल में डेस्कटॉप मोड है
+const [deviceStatus, setDeviceStatus] = useState(() => {
+    // ऐप लोड होते समय ही तुरंत चेक कर लें कि क्या यह डेस्कटॉप साइट है
+    const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    if (isMobileUA && window.innerWidth >= 768) {
+      return 'desktop'; // अगर मोबाइल में डेस्कटॉप साइट ऑन है और चौड़ाई अच्छी खासी है
+    }
+    return window.innerWidth >= 1024 ? 'desktop' : 'mobile-portrait';
+  });
 
-useEffect(() => {
+  useEffect(() => {
     const updateDeviceStatus = () => {
       const width = window.innerWidth;
-      const height = window.innerHeight;
       const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
       
-      // डेस्कटॉप साइट डिटेक्शन: यदि यूजर-एजेंट मोबाइल है, लेकिन लैंडस्केप मोड में चौड़ाई बहुत ज्यादा है 
-      // या यूजर ने डेस्कटॉप मोड इनेबल किया है (जहाँ स्क्रीन की प्रभावी चौड़ाई डेस्कटॉप जैसी हो जाती है)
-      const isDesktopSite = isMobileUA && (width >= 1024 || (window.matchMedia("(orientation: landscape)").matches && width > 900));
-
+      // 1. अगर असली डेस्कटॉप/लैपटॉप है
       if (!isMobileUA && width >= 1024) {
         setDeviceStatus('desktop');
-      } else if (isDesktopSite) {
-        setDeviceStatus('desktop'); // एक बार डेस्कटॉप साइट डिटेक्ट होने पर इसे हमेशा डेस्कटॉप रखें
+        return;
+      }
+
+      // 2. सबसे जरूरी ट्रिक: अगर मोबाइल में डेस्कटॉप साइट ऑन है, तो लैंडस्केप होने पर width बड़ी हो जाती है। 
+      // अगर एक बार भी यह डेस्कटॉप जितनी चौड़ाई या डेस्कटॉप साइट मोड में आ गया, तो इसे लॉक कर दें।
+      if (isMobileUA && (width >= 768 || document.documentElement.clientWidth >= 768)) {
+        setDeviceStatus('desktop');
+        return;
+      }
+
+      // 3. सामान्य मोबाइल व्यू (पोर्ट्रेट या लैंडस्केप)
+      const isLandscape = window.matchMedia("(orientation: landscape)").matches;
+      if (isLandscape) {
+        setDeviceStatus('mobile-landscape');
       } else {
-        const isLandscape = window.matchMedia("(orientation: landscape)").matches;
-        if (isLandscape) {
-          setDeviceStatus('mobile-landscape');
-        } else {
-          setDeviceStatus('mobile-portrait');
-        }
+        setDeviceStatus('mobile-portrait');
       }
     };
 
+    // तुरंत एक बार कॉल करें
     updateDeviceStatus();
+
+    // इवेंटListeners
     window.addEventListener('resize', updateDeviceStatus);
     window.addEventListener('orientationchange', updateDeviceStatus);
 
@@ -78,7 +92,6 @@ useEffect(() => {
       window.removeEventListener('orientationchange', updateDeviceStatus);
     };
   }, []);
-
 
   // API: Load Table Data
   const loadTableData = () => {
