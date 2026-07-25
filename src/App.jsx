@@ -84,8 +84,6 @@ const MONTHS_LIST = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Se
           // 🔥 मोबाइल के लैंडस्केप मॉड में जूम आउट करके कंटेंट सही दिखाने के लिए (मोबाइल का डेस्कटॉप मोड)
           document.body.style.zoom = "0.60"; // आप इसे 0.7 या 0.8 अपनी जरूरत के हिसाब से रख सकते हैं
           document.body.style.width = "100%"; // इसमें चौड़ाई को बढ़ाने की भी जरूरत नहीं पड़ेगी
-          document.body.style.height = "150vh"; // इसमें चौड़ाई को बढ़ाने की भी जरूरत नहीं पड़ेगी
-          document.body.style.minHeight = "150vh"; // इसमें चौड़ाई को बढ़ाने की भी जरूरत नहीं पड़ेगी
           } else {
             setDeviceStatus('tablet'); // <--- यहाँ टैबलेट व्यू सेट होगा
           }
@@ -259,7 +257,7 @@ return (
   <header className="bg-white pt-3 pb-3 p-6 border-b border-gray-300 flex-shrink-0 flex items-center justify-between">
     
     {/* बायां हिस्सा: टाइटल */}
-    <h1 className="text-2xl font-bold text-blue-600">Finance Tracker</h1>
+    <h1 className="text-2xl font-bold text-blue-600">Finance Tracker h</h1>
 
     {/* दाहिना हिस्सा: बेल और यूजर आइकॉन */}
     <div className="flex items-center gap-4">
