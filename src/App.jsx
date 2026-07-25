@@ -147,10 +147,10 @@ return (
 {/*=========================================================================================================*/}      
       {deviceView === 'mobile-portrait' && (
 
-        <div className="min-h-screen pb-0 bg-white overflow-y-auto">
+        <div className="min-h-screen pb-10 bg-white overflow-y-auto">
           
           {/* मोबाइल पोर्ट्रेट का मुख्य कंटेंट यहाँ दिखेगा */}
-          <main className="p-4">
+          <main>
             {activeTab === 'dashboard' && <DashboardView data={databaseData} viewMode={viewMode} />}
             {activeTab === 'transactions' && <TransactionsView data={databaseData} />}
             {activeTab === 'loanManager' && <LoanManager />}
@@ -204,7 +204,7 @@ return (
   <header className="bg-white pt-3 pb-3 p-6 border-b border-gray-300 flex-shrink-0 flex items-center justify-between">
     
     {/* बायां हिस्सा: टाइटल */}
-    <h1 className="text-2xl font-bold text-blue-600">Finance Tracker .</h1>
+    <h1 className="text-2xl font-bold text-blue-600">Finance Tracker</h1>
 
     {/* दाहिना हिस्सा: बेल और यूजर आइकॉन */}
     <div className="flex items-center gap-4">
