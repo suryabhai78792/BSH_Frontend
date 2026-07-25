@@ -44,37 +44,45 @@ const MONTHS_LIST = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Se
 
 
 // यह पता लगाने के लिए कि क्या डिवाइस सच में डेस्कटॉप है या मोबाइल में डेस्कटॉप मोड है
-  const [deviceStatus, setDeviceStatus] = useState(() => {
+    const [deviceStatus, setDeviceStatus] = useState(() => {
     const width = window.innerWidth;
-    const height = width > window.innerHeight;
+    const height = window.innerHeight;
+    const isLandscape = width > height;
     const ua = navigator.userAgent;
-    const isDesktopSite = !/Android.*Mobile|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua) && (ua.includes('Macintosh') || ua.includes('Windows') || ua.includes('X11') || width >= 900);
+    const isDesktopSite = !/Android.*Mobile|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua) && (ua.includes('Macintosh') || ua.includes('Windows') || ua.includes('X11') || width >= 768);
     
-    if (isDesktopSite || (width >= 1024 && !/Android|webOS|iPhone|iPad|iPod/i.test(ua))) {
+    if (width >= 1024 && !/Android|webOS|iPhone|iPad|iPod/i.test(ua)) {
       return 'desktop';
     }
-    return height ? 'mobile-landscape' : 'mobile-portrait';
+    if (isDesktopSite) {
+      return isLandscape ? 'desktop' : 'tablet'; // अगर डेस्कटॉप साइट ऑन है और पोर्ट्रेट है तो टैबलेट व्यू
+    }
+    return isLandscape ? 'mobile-landscape' : 'mobile-portrait';
   });
 
-  // 2. useEffect को भी पूरी तरह से नए कोड से बदल दें
+  // 2. useEffect को अपडेट करें
   useEffect(() => {
     const updateDeviceStatus = () => {
       const width = window.innerWidth;
       const height = window.innerHeight;
       const isLandscape = width > height;
+      const ua = navigator.userAgent;
 
-      // असली डेस्कटॉप या लैपटॉप के लिए
+      // असली डेस्कटॉप या लैपटॉप
       if (width >= 1024 && !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
         setDeviceStatus('desktop');
         return;
       }
 
-      // मोबाइल में "Desktop Site" ऑन होने पर पहचान करने के लिए
-      const ua = navigator.userAgent;
-      const isDesktopSiteActive = !/Android.*Mobile|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua) && (ua.includes('Macintosh') || ua.includes('Windows') || ua.includes('X11') || width >= 900);
+      // मोबाइल में "Desktop Site" ऑन होने पर चेक करें
+      const isDesktopSiteActive = !/Android.*Mobile|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua) && (ua.includes('Macintosh') || ua.includes('Windows') || ua.includes('X11') || width >= 768);
 
       if (isDesktopSiteActive) {
-        setDeviceStatus('desktop');
+        if (isLandscape) {
+          setDeviceStatus('desktop');
+        } else {
+          setDeviceStatus('tablet'); // <--- यहाँ टैबलेट व्यू सेट होगा
+        }
         return;
       }
 
@@ -314,7 +322,8 @@ return (
   
   {deviceStatus === 'mobile-portrait' && <span>मोबाइल पोर्ट्रेट व्यू</span>}
   {deviceStatus === 'mobile-landscape' && <span>मोबाइल लैंडस्केप व्यू</span>}
-  {deviceStatus === 'desktop' && <span>डेस्कटॉप मोड r</span>}
+  {deviceStatus === 'tablet' && <span>टैबलेट व्यू</span>}
+  {deviceStatus === 'desktop' && <span>डेस्कटॉप मोड p</span>}
 
 </div>
 
