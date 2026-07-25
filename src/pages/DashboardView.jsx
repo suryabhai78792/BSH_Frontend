@@ -6,6 +6,7 @@ import { useDeviceView } from '../components/useDeviceView';
 import { convertDataByMode } from '../components/dataConverter';
 import ReusableTable from '../components/ReusableTable';
 import { PieChart, Pie, Cell, ResponsiveContainer,Legend, Tooltip, LabelList } from 'recharts';
+import {Bell, User} from 'lucide-react';
 import { useState, useEffect, useRef } from 'react'
 
 // --- डेटा और रंग ---
@@ -297,8 +298,28 @@ const { tableData: convertedTableData } = convertDataByMode(data, viewMode, 'inc
       {/* 1. मोबाइल पोर्ट्रेट व्यू के लिए लेआउट */}
 {/*=========================================================================================================*/}      
       {deviceView === 'mobile-portrait' && (
-        <StatsCard income={income} expense={expense} budget={budget} savings={savings} loan={loan} />
+        <div className="min-h-screen pt-15 pb-25 bg-white overflow-y-auto overscroll-y-none">
+          <header className="fixed top-0 left-0 right-0 z-50 bg-white py-3 px-6 border-b border-gray-300 flex items-center justify-between ">
+            
+            {/* बायां हिस्सा: टाइटल */}
+            <h1 className="text-2xl font-bold text-blue-600">Finance Tracker</h1>
 
+            {/* दाहिना हिस्सा: बेल और यूजर आइकॉन */}
+            <div className="flex items-center gap-4">
+          
+              {/* बेल आइकॉन (Lucide-react से Bell इम्पोर्ट करना न भूलें) */}
+              <Bell className="text-gray-500 cursor-pointer" size={24} />
+              
+              {/* यूजर आइकॉन */}
+              <div className="bg-gray-200 p-2 rounded-full cursor-pointer">
+                <User className="text-gray-600" size={20} />
+              </div>
+            </div>
+            
+          </header>
+
+          <StatsCard income={income} expense={expense} budget={budget} savings={savings} loan={loan} />
+        </div>
 
       )}
 
