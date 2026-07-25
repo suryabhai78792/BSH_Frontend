@@ -68,6 +68,7 @@ const MONTHS_LIST = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Se
       const isLandscape = width > height;
       const ua = navigator.userAgent;
 
+
       // असली डेस्कटॉप या लैपटॉप
       if (width >= 1024 && !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
         setDeviceStatus('desktop');
@@ -80,6 +81,9 @@ const MONTHS_LIST = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Se
       if (isDesktopSiteActive) {
         if (isLandscape) {
           setDeviceStatus('desktop');
+          // 🔥 मोबाइल के लैंडस्केप मॉड में जूम आउट करके कंटेंट सही दिखाने के लिए (मोबाइल का डेस्कटॉप मोड)
+          let metaTag = document.querySelector("meta[name=viewport]");
+          metaTag.content = "width=1280, initial-scale=1.0";
         } else {
           setDeviceStatus('tablet'); // <--- यहाँ टैबलेट व्यू सेट होगा
         }
@@ -204,7 +208,7 @@ return (
         {deviceStatus === 'mobile-portrait' && <span>मोबाइल पोर्ट्रेट व्यू</span>}
         {deviceStatus === 'mobile-landscape' && <span>मोबाइल लैंडस्केप व्यू</span>}
         {deviceStatus === 'tablet' && <span>टैबलेट व्यू</span>}
-        {deviceStatus === 'desktop' && <span>डेस्कटॉप मोड</span>}
+        {deviceStatus === 'desktop' && <span>डेस्कटॉप मोड p</span>}
       </div>
     </header>
 
@@ -254,11 +258,11 @@ return (
       {/* 4. डेस्कटॉप मोड (या लैपटॉप और मोबाइल में डेस्कटॉप साइट + लैंडस्केप) के लिए लेआउट */}
 {/*=========================================================================================================*/}   
       {deviceStatus === 'desktop' && (
-
-
+    
       // पूरे पेज को एक फिक्स्ड हाइट दें ताकि बाहर वाला स्क्रोल बार न आए
       <div className="h-screen flex flex-col bg-gray-50 overflow-hidden">
-        
+      {/* आपका डेस्कटॉप वाला लेआउट */}
+
 
         {/* 1. हेडर (फिक्स्ड रहेगा) */}
   <header className="bg-white  p-6 border-b border-gray-300 flex-shrink-0 flex items-center justify-between">
