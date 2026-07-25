@@ -209,7 +209,7 @@ return (
         {deviceStatus === 'mobile-portrait' && <span>मोबाइल पोर्ट्रेट व्यू</span>}
         {deviceStatus === 'mobile-landscape' && <span>मोबाइल लैंडस्केप व्यू</span>}
         {deviceStatus === 'tablet' && <span>टैबलेट व्यू</span>}
-        {deviceStatus === 'desktop' && <span>डेस्कटॉप मोड d</span>}
+        {deviceStatus === 'desktop' && <span>डेस्कटॉप मोड w</span>}
       </div>
     </header>
 
