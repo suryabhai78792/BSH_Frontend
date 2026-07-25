@@ -147,13 +147,13 @@ return (
 {/*=========================================================================================================*/}      
       {deviceView === 'mobile-portrait' && (
 
-        <div className="min-h-screen pt-20 pb-20 bg-white overflow-y-auto">
+        <div className="min-h-screen pt-20 pb-20 bg-white overflow-y-auto overscroll-y-none">
           
                 {/* 1. हेडर (फिक्स्ड रहेगा) */}
-          <header className="fixed top-0 left-0 right-0 z-50 bg-white py-3 px-6 border-b border-gray-300 flex items-center justify-between shadow-sm">
+          <header className="fixed top-0 left-0 right-0 z-50 bg-white py-3 px-6 border-b border-gray-300 flex items-center justify-between ">
             
             {/* बायां हिस्सा: टाइटल */}
-            <h1 className="text-2xl font-bold text-blue-600">Finance Tracker</h1>
+            <h1 className="text-2xl font-bold text-blue-600">Finance Tracker .</h1>
 
             {/* दाहिना हिस्सा: बेल और यूजर आइकॉन */}
             <div className="flex items-center gap-4">
