@@ -18,7 +18,7 @@ const MONTHS_LIST = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Se
  // स्टेट्स (States)
 
 // यह पता लगाने के लिए कि क्या डिवाइस सच में डेस्कटॉप है या मोबाइल में डेस्कटॉप मोड है
-  const [isDesktopMode, setIsDesktopMode] = useState(false);
+  const [deviceStatus, setDeviceStatus] = useState('desktop');
   const [databaseData, setDatabaseData] = useState({});
   const [showModal, setShowModal] = useState(false);
   const latestDataRef = useRef({}) // 🔥 लेटेस्ट डेटा को बिना री-रेंडर ट्रैक करने के लिए
@@ -43,24 +43,44 @@ const MONTHS_LIST = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Se
   const GET_DATA_URL = 'https://my-income-backend.onrender.com/getdata'
   const SAVE_DATA_URL = 'https://my-income-backend.onrender.com/save'
 
-  useEffect(() => {
-    const checkScreenMode = () => {
-      // अगर स्क्रीन की चौड़ाई 1024px से ज्यादा है या यूजर ने डेस्कटॉप साइट ऑन की है
-      if (window.innerWidth >= 1024 || window.matchMedia("(min-width: 1024px)").matches) {
-        setIsDesktopMode(true);
+
+
+useEffect(() => {
+    const updateDeviceStatus = () => {
+      const width = window.innerWidth;
+      // चेक करें कि क्या यूजर का ब्राउज़र मोबाइल/टैबलेट का है या नहीं
+      const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      
+      // अगर मोबाइल यूजर-एजेंट है और स्क्रीन की चौड़ाई डेस्कटॉप जितनी बड़ी नहीं है (यानी मोबाइल व्यू है)
+      // लेकिन अगर ब्राउज़र में "Desktop Site" चेक किया हुआ है, तो अक्सर screen.width बड़ा हो जाता है या UA बदल जाता है
+      const isDesktopSiteEnabled = isMobileUA && (width >= 1024 || window.screen.width >= 1024);
+
+      if (!isMobileUA && width >= 1024) {
+        setDeviceStatus('desktop'); // असली डेस्कटॉप/लैपटॉप
+      } else if (isDesktopSiteEnabled) {
+        setDeviceStatus('desktop'); // मोबाइल में डेस्कटॉप साइट ऑन है
       } else {
-        // चेक करें कि क्या मोबाइल लैंडस्केप है और डेस्कटॉप मोड नहीं है
-        setIsDesktopMode(false);
+        // सामान्य मोबाइल व्यू
+        const isLandscape = window.matchMedia("(orientation: landscape)").matches;
+        if (isLandscape) {
+          setDeviceStatus('mobile-landscape');
+        } else {
+          setDeviceStatus('mobile-portrait');
+        }
       }
     };
 
-    checkScreenMode();
-    window.addEventListener('resize', checkScreenMode);
-    return () => window.removeEventListener('resize', checkScreenMode);
+    updateDeviceStatus();
+    window.addEventListener('resize', updateDeviceStatus);
+    window.addEventListener('orientationchange', updateDeviceStatus);
+
+    return () => {
+      window.removeEventListener('resize', updateDeviceStatus);
+      window.removeEventListener('orientationchange', updateDeviceStatus);
+    };
   }, []);
 
 
-  
   // API: Load Table Data
   const loadTableData = () => {
        setIsLoading(true); // डेटा आते ही लोडिंग बंद करें
@@ -277,18 +297,9 @@ return (
 {/* स्क्रीन मोड स्टेटस */}
 <div className="flex items-center gap-2 px-3 py-1 bg-gray-100 rounded-full text-xs font-semibold text-gray-700">
   
-  {/* जब मोबाइल पोर्ट्रेट हो */}
-  <span className="block md:hidden landscape:hidden">मोबाइल पोर्ट्रेट व्यू</span>
-
-  {/* जब मोबाइल लैंडस्केप हो (और डेस्कटॉप मोड ऑन न हो) */}
-  <span className="hidden landscape:max-lg:inline" style={{ display: window.innerWidth >= 1024 ? 'none' : undefined }}>
-    मोबाइल लैंडस्केप व्यू
-  </span>
-
-  {/* डेस्कटॉप मोड (जब लैपटॉप हो या मोबाइल में डेस्कटॉप साइट ऑन करके लैंडस्केप किया गया हो) */}
-  <span className="hidden lg:inline" style={{ display: window.innerWidth >= 1024 ? 'inline' : undefined }}>
-    डेस्कटॉप मोड
-  </span>
+  {deviceStatus === 'mobile-portrait' && <span>मोबाइल पोर्ट्रेट व्यू</span>}
+  {deviceStatus === 'mobile-landscape' && <span>मोबाइल लैंडस्केप व्यू</span>}
+  {deviceStatus === 'desktop' && <span>डेस्कटॉप मोड</span>}
 
 </div>
 
