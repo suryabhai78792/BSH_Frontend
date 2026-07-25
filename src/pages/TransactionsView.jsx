@@ -15,10 +15,10 @@ const processedData = React.useMemo(() => {
 
   return (
      
-    <div className="p-5 bg-white rounded-xl border border-gray-300 mb-0 overscroll-y-none">
+    <div className="p-5 bg-white rounded-xl border border-gray-300 mb-0 ">
       <h2 className="text-xl font-bold mb-4 w-full text-center">All Transactions ({processedData.length})</h2>    
       <p className="font-semibold text-gray-800"> Date Income<span className="font-semibold text-center text-gray-800">Total Income</span> </p>               
-      <div className=" h-[690px] overflow-y-auto mb-0 ">
+      <div className=" h-[690px] overflow-y-auto mb-0 overscroll-y-none">
         <ul className="space-y-2">
           {processedData.length > 0 ? (
             processedData.map((item, index) => (
