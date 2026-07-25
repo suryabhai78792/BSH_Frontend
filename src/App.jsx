@@ -243,17 +243,215 @@ return (
 
       {/* 4. डेस्कटॉप मोड (या लैपटॉप और मोबाइल में डेस्कटॉप साइट + लैंडस्केप) के लिए लेआउट */}
       {deviceStatus === 'desktop' && (
-        <div className="h-full p-8 bg-green-50 overflow-y-auto">
-          <h2 className="text-2xl font-bold text-green-600">डेस्कटॉप मोड लेआउट</h2>
-          {/* यहाँ पूरा बड़ा डेस्कटॉप लेआउट (Sidebar + Multi-column grid) सेट करें */}
-          <div className="grid grid-cols-4 gap-6">
-            {/* डेस्कटॉप का कंटेंट */}
-          </div>
-        </div>
-      )}
 
+
+      // पूरे पेज को एक फिक्स्ड हाइट दें ताकि बाहर वाला स्क्रोल बार न आए
+      <div className="h-screen flex flex-col bg-gray-50 overflow-hidden">
+        
+
+        {/* 1. हेडर (फिक्स्ड रहेगा) */}
+  <header className="bg-white  p-6 border-b border-gray-300 flex-shrink-0 flex items-center justify-between">
+    
+    {/* बायां हिस्सा: टाइटल */}
+    <Menu className="cursor-pointer lg:hidden max-md:landscape:hidden" onClick={() => setIsSidebarOpen(true)} />
+    <h1 className="text-2xl font-bold text-blue-600">Finance Tracker</h1>
+
+    {/* दाहिना हिस्सा: बेल और यूजर आइकॉन */}
+    <div className="flex items-center gap-4">
+      <InternetClock />
+      {/* बेल आइकॉन (Lucide-react से Bell इम्पोर्ट करना न भूलें) */}
+      <Bell className="text-gray-500 cursor-pointer" size={24} />
+      
+      {/* यूजर आइकॉन */}
+      <div className="bg-gray-200 p-2 rounded-full cursor-pointer">
+        <User className="text-gray-600" size={20} />
+      </div>
     </div>
+    
+  </header>
+
+
+
+
+        {/* 2. मुख्य कंटेनर (साइडबार + कंटेंट) */}
+        <div className="flex flex-1 overflow-hidden">
+          
+          {/* साइडबार */}
+  <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-300 p-6 
+    transform transition-transform duration-300 ease-in-out 
+    ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} 
+    lg:translate-x-0 lg:relative lg:block max-md:landscape:block hidden md:block`}> 
+      
+      {/* क्लोज बटन केवल मोबाइल के लिए */}
+      <div className="flex justify-between items-center max-md:landscape:hidden mb-6 lg:hidden">
+        <span className="font-bold">Menu</span>
+        <X className="cursor-pointer" onClick={() => setIsSidebarOpen(false)} />
+      </div>
+        
+            {/* ... आपका साइडबार कोड यहाँ रहेगा ... */}
+
+
+          <button className="w-full bg-blue-600 text-white rounded-lg py-2 mb-6 flex items-center justify-center gap-2" onClick={() => setShowModal(true)}>
+            <Plus size={20} /> Add Transaction 
+          </button>
+          
+
+          <nav className="space-y-4">
+
+            <div     
+              className={`cursor-pointer flex items-center mb-0 gap-3 ${activeTab === 'dashboard' ? 'text-blue-600 font-bold' : 'text-gray-600'}`} 
+              onClick={() => setActiveTab('dashboard')}
+            >
+              <LayoutDashboard size={20}/> Dashboard
+            </div>
+
+            {/* एनीमेशन वाला सब-मेनू */}
+            <div className={`submenu-container ${activeTab === 'dashboard' ? 'open' : ''}`}>
+              <div className="submenu-content">
+                <div className="pl-8 pt-2 space-y-2 text-sm text-gray-500">
+                  
+                    <div className="flex items-center mt-2 gap-3 text-gray-600 cursor-pointer whitespace-nowrap" 
+                        onClick={() => setViewMode('daily')} style={{ 
+                        fontWeight: viewMode === 'daily' ? 'bold' : 'normal',
+                        color: viewMode === 'daily' ? 'blue' : 'gray' 
+                    }} >📅महीना व्यू (तारीख वार) </div>
+
+                    <div className="flex items-center gap-3 text-gray-600 cursor-pointer" 
+                          onClick={() => setViewMode('yearly')} style={{ 
+                          fontWeight: viewMode === 'yearly' ? 'bold' : 'normal',
+                          color: viewMode === 'yearly' ? 'blue' : 'gray' 
+                    }}>📈साल व्यू (महीने वार) </div>
+
+                    <div className="flex items-center gap-3 text-gray-600 cursor-pointer" 
+                        onClick={() => setViewMode('final')} style={{ 
+                        fontWeight: viewMode === 'final' ? 'bold' : 'normal',
+                        color: viewMode === 'final' ? 'blue' : 'gray' 
+                    }}>💰फाइनल इनकम व्यू </div>
+
+                  </div>
+                </div>
+              </div>
+
+            <div     
+              className={`cursor-pointer flex items-center gap-3 ${activeTab === 'transactions' ? 'text-blue-600 font-bold' : 'text-gray-600'}`} 
+              onClick={() => setActiveTab('transactions')}
+            >
+              <Receipt size={20}/> Transactions
+            </div>
+            <div     
+              className={`cursor-pointer flex items-center gap-3 ${activeTab === 'transactions' ? 'text-blue-600 font-bold' : 'text-gray-600'}`} 
+              onClick={() => setActiveTab('loanManager')}
+            >
+              <CreditCard size={20} />
+              Loan Managers
+            </div>
+
+            <div className="flex items-center gap-3 text-gray-600"><BarChart3 size={20}/> Reports</div>
+            <div className="flex items-center gap-3 text-gray-600"><Settings size={20}/> Settings</div>
+        
+          </nav>
+
+          <button className="w-full bg-blue-600 text-white rounded-lg py-2 mt-6 flex items-center justify-center gap-2" onClick={handleDownloadBackup}>
+            डेटा बैकअप (JSON)
+          </button>
+
+
+
+
+          </div>
+
+
+  {/* मुख्य कंटेंट क्षेत्र */}
+  <main className="flex-1 overflow-y-auto p-2 mb-0 lg:p-8">
+    
+
+
+
+  {/* स्क्रीन मोड स्टेटस */}
+  <div className="flex items-center gap-2 px-3 py-1 bg-gray-100 rounded-full text-xs font-semibold text-gray-700">
+    
+    {deviceStatus === 'mobile-portrait' && <span>मोबाइल पोर्ट्रेट व्यू</span>}
+    {deviceStatus === 'mobile-landscape' && <span>मोबाइल लैंडस्केप व्यू</span>}
+    {deviceStatus === 'tablet' && <span>टैबलेट व्यू</span>}
+    {deviceStatus === 'desktop' && <span>डेस्कटॉप मोड p</span>}
+
   </div>
+
+
+
+    {/* 2. दूसरा 'main' हटाकर सीधे DashboardView रखें */}
+    <div> 
+      {activeTab === 'dashboard' && <DashboardView data={databaseData} viewMode={viewMode} />}
+      {activeTab === 'transactions' && <TransactionsView data={databaseData} />}
+      {activeTab === 'loanManager' && <LoanManager />}
+    </div>
+
+  </main>
+
+
+
+        {/* Entry Modal */}
+        {showModal && (
+          <div id="entryModal" className="modal" style={{ display: 'flex' }}>
+            <div className="modal-content" id="modalContainer" ref={modalRef}>
+              <div className="modal-header draggable-header" id="modalHeader" onMouseDown={handleMouseDown}>
+                नई एंट्री जोड़ें 📝
+                <span onClick={() => setShowModal(false)} style={{ float: 'right', cursor: 'pointer', fontWeight: 'bold', fontSize: '20px' }}>×</span>
+              </div>
+                            <div className="modal-body">
+                              {/* 1. तारीख चुनने के लिए कैलेंडर बॉक्स */}
+                              <label style={{ display: 'block', marginBottom: '5px', textAlign: 'left', fontWeight: 'bold' }}>तारीख चुनें (Date):</label>
+                              <input 
+                                type="date" 
+                                value={dateInput} 
+                                onChange={(e) => setDateInput(e.target.value)} 
+                                style={{ padding: '8px', marginBottom: '15px', width: '100%', boxSizing: 'border-box' }}
+                              />
+
+                              {/* 2. कमाई की राशि डालने के लिए इनपुट बॉक्स (जो छूट गया था) */}
+                              <label style={{ display: 'block', marginBottom: '5px', textAlign: 'left', fontWeight: 'bold' }}>कमाई की राशि (₹):</label>
+                              <input
+                                type="number"
+                                id="incomeInput"
+                                placeholder="राशि दर्ज करें (जैसे: 5000)"
+                                value={incomeInput}
+                                onChange={(e) => setIncomeInput(e.target.value)}
+                                style={{ padding: '8px', marginBottom: '15px', width: '100%', boxSizing: 'border-box' }}
+                              />
+
+                              {/* 3. सेव करने का बटन */}
+                              <button
+                                className="btn-save"
+                                id="saveBtn"
+                                onClick={saveData}
+                                disabled={isSaveDisabled}
+                                style={{ 
+                                  backgroundColor: isSaveDisabled ? '#ccc' : '#00d2ff', 
+                                  width: '100%', 
+                                  padding: '10px', 
+                                  color: '#fff', 
+                                  border: 'none', 
+                                  cursor: isSaveDisabled ? 'not-allowed' : 'pointer',
+                                  fontWeight: 'bold'
+                                }}
+                              >
+                                सेव करें
+                              </button>
+                            </div>
+            </div>
+          </div>
+        )}
+
+
+        </div>
+      </div>
+
+
+
+        )}
+
+      </div>
+    </div>
   );
 
 }
