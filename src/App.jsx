@@ -17,7 +17,8 @@ const MONTHS_LIST = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Se
 
  // स्टेट्स (States)
 
-
+// यह पता लगाने के लिए कि क्या डिवाइस सच में डेस्कटॉप है या मोबाइल में डेस्कटॉप मोड है
+  const [isDesktopMode, setIsDesktopMode] = useState(false);
   const [databaseData, setDatabaseData] = useState({});
   const [showModal, setShowModal] = useState(false);
   const latestDataRef = useRef({}) // 🔥 लेटेस्ट डेटा को बिना री-रेंडर ट्रैक करने के लिए
@@ -42,6 +43,24 @@ const MONTHS_LIST = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Se
   const GET_DATA_URL = 'https://my-income-backend.onrender.com/getdata'
   const SAVE_DATA_URL = 'https://my-income-backend.onrender.com/save'
 
+  useEffect(() => {
+    const checkScreenMode = () => {
+      // अगर स्क्रीन की चौड़ाई 1024px से ज्यादा है या यूजर ने डेस्कटॉप साइट ऑन की है
+      if (window.innerWidth >= 1024 || window.matchMedia("(min-width: 1024px)").matches) {
+        setIsDesktopMode(true);
+      } else {
+        // चेक करें कि क्या मोबाइल लैंडस्केप है और डेस्कटॉप मोड नहीं है
+        setIsDesktopMode(false);
+      }
+    };
+
+    checkScreenMode();
+    window.addEventListener('resize', checkScreenMode);
+    return () => window.removeEventListener('resize', checkScreenMode);
+  }, []);
+
+
+  
   // API: Load Table Data
   const loadTableData = () => {
        setIsLoading(true); // डेटा आते ही लोडिंग बंद करें
@@ -255,17 +274,23 @@ return (
 
 
 
-  {/* बीच/दाहिना हिस्सा: स्क्रीन मोड स्टेटस (नया जोड़ा गया कोड) */}
-  <div className="flex items-center gap-2 px-3 py-1 bg-gray-100 rounded-full text-xs font-semibold text-gray-700">
-    {/* मोबाइल पोर्ट्रेट व्यू (केवल मोबाइल और जब स्क्रीन पोर्ट्रेट हो) */}
-    <span className="block md:hidden landscape:hidden">मोबाइल पोर्ट्रेट व्यू</span>
+{/* स्क्रीन मोड स्टेटस */}
+<div className="flex items-center gap-2 px-3 py-1 bg-gray-100 rounded-full text-xs font-semibold text-gray-700">
+  
+  {/* जब मोबाइल पोर्ट्रेट हो */}
+  <span className="block md:hidden landscape:hidden">मोबाइल पोर्ट्रेट व्यू</span>
 
-    {/* मोबाइल लैंडस्केप व्यू (केवल मोबाइल और जब स्क्रीन लैंडस्केप हो) */}
-    <span className="hidden landscape:max-lg:inline">मोबाइल लैंडस्केप व्यू</span>
+  {/* जब मोबाइल लैंडस्केप हो (और डेस्कटॉप मोड ऑन न हो) */}
+  <span className="hidden landscape:max-lg:inline" style={{ display: window.innerWidth >= 1024 ? 'none' : undefined }}>
+    मोबाइल लैंडस्केप व्यू
+  </span>
 
-    {/* डेस्कटॉप मोड (केवल लैपटॉप/कंप्यूटर स्क्रीन पर) */}
-    <span className="hidden md:block">डेस्कटॉप मोड</span>
-  </div>
+  {/* डेस्कटॉप मोड (जब लैपटॉप हो या मोबाइल में डेस्कटॉप साइट ऑन करके लैंडस्केप किया गया हो) */}
+  <span className="hidden lg:inline" style={{ display: window.innerWidth >= 1024 ? 'inline' : undefined }}>
+    डेस्कटॉप मोड
+  </span>
+
+</div>
 
 
 
