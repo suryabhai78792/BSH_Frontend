@@ -84,7 +84,9 @@ const MONTHS_LIST = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Se
           // 🔥 मोबाइल के लैंडस्केप मॉड में जूम आउट करके कंटेंट सही दिखाने के लिए (मोबाइल का डेस्कटॉप मोड)
           document.body.style.transform = "scale(0.75)";
           document.body.style.transformOrigin = "top left";
-          document.body.style.width = "133.33%"; // (100 / 0.75) ताकि स्क्रीन पर फैल जाए
+          document.body.style.width = "133.33%"; // (100 / 0.75)
+          document.body.style.height = "133.33%"; // नीचे की कटी हुई जगह को भरने के लिए
+          document.body.style.minHeight = "133.33%";
           } else {
             setDeviceStatus('tablet'); // <--- यहाँ टैबलेट व्यू सेट होगा
           }
@@ -209,7 +211,7 @@ return (
         {deviceStatus === 'mobile-portrait' && <span>मोबाइल पोर्ट्रेट व्यू</span>}
         {deviceStatus === 'mobile-landscape' && <span>मोबाइल लैंडस्केप व्यू</span>}
         {deviceStatus === 'tablet' && <span>टैबलेट व्यू</span>}
-        {deviceStatus === 'desktop' && <span>डेस्कटॉप मोड c</span>}
+        {deviceStatus === 'desktop' && <span>डेस्कटॉप मोड e</span>}
       </div>
     </header>
 
