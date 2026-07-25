@@ -301,7 +301,7 @@ const { tableData: convertedTableData } = convertDataByMode(data, viewMode, 'inc
 {/*=========================================================================================================*/}      
       {deviceView === 'mobile-portrait' && (
         <div className="min-h-screen pt-15 pb-25 bg-white overflow-y-auto overscroll-y-none">
-          <header className="fixed top-0 left-0 right-0 z-50 bg-white py-3 px-6 border-b border-gray-300 flex items-center justify-between ">
+          <header className="fixed top-0 left-0 right-0 z-50 bg-white py-3 px-3 border-b border-gray-300 flex items-center justify-between ">
             
             {/* बायां हिस्सा: टाइटल */}
             {/* यूजर आइकॉन */}
