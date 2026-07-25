@@ -82,13 +82,14 @@ const MONTHS_LIST = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Se
         if (isLandscape) {
           setDeviceStatus('desktop');
           // 🔥 मोबाइल के लैंडस्केप मॉड में जूम आउट करके कंटेंट सही दिखाने के लिए (मोबाइल का डेस्कटॉप मोड)
-          let metaTag = document.querySelector("meta[name=viewport]");
-          metaTag.content = "width=1280, initial-scale=0.5, maximum-scale=2.0, user-scalable=yes";
-        } else {
-          setDeviceStatus('tablet'); // <--- यहाँ टैबलेट व्यू सेट होगा
+          document.body.style.transform = "scale(0.75)";
+          document.body.style.transformOrigin = "top left";
+          document.body.style.width = "133.33%"; // (100 / 0.75) ताकि स्क्रीन पर फैल जाए
+          } else {
+            setDeviceStatus('tablet'); // <--- यहाँ टैबलेट व्यू सेट होगा
+          }
+          return;
         }
-        return;
-      }
 
       // सामान्य मोबाइल व्यू (जब डेस्कटॉप साइट ऑफ हो)
       if (isLandscape) {
@@ -208,7 +209,7 @@ return (
         {deviceStatus === 'mobile-portrait' && <span>मोबाइल पोर्ट्रेट व्यू</span>}
         {deviceStatus === 'mobile-landscape' && <span>मोबाइल लैंडस्केप व्यू</span>}
         {deviceStatus === 'tablet' && <span>टैबलेट व्यू</span>}
-        {deviceStatus === 'desktop' && <span>डेस्कटॉप मोड Q</span>}
+        {deviceStatus === 'desktop' && <span>डेस्कटॉप मोड c</span>}
       </div>
     </header>
 
