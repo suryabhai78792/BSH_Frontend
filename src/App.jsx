@@ -149,6 +149,26 @@ return (
 
         <div className="min-h-screen pb-10 bg-white overflow-y-auto">
           
+                {/* 1. हेडर (फिक्स्ड रहेगा) */}
+          <header className="bg-white pt-3 pb-3 p-6 border-b border-gray-300 flex-shrink-0 flex items-center justify-between">
+            
+            {/* बायां हिस्सा: टाइटल */}
+            <h1 className="text-2xl font-bold text-blue-600">Finance Tracker</h1>
+
+            {/* दाहिना हिस्सा: बेल और यूजर आइकॉन */}
+            <div className="flex items-center gap-4">
+          
+              {/* बेल आइकॉन (Lucide-react से Bell इम्पोर्ट करना न भूलें) */}
+              <Bell className="text-gray-500 cursor-pointer" size={24} />
+              
+              {/* यूजर आइकॉन */}
+              <div className="bg-gray-200 p-2 rounded-full cursor-pointer">
+                <User className="text-gray-600" size={20} />
+              </div>
+            </div>
+            
+          </header>
+
           {/* मोबाइल पोर्ट्रेट का मुख्य कंटेंट यहाँ दिखेगा */}
           <main className="p-4 px-0">
             {activeTab === 'dashboard' && <DashboardView data={databaseData} viewMode={viewMode} />}

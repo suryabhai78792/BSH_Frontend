@@ -42,6 +42,6 @@ export default function InternetClock() {
       <div className="text-lg font-bold text-gray-900 tracking-wide">
         ⏰ {formattedTime}
       </div>
-    </div>
+</div>
   );
 }
