@@ -3,7 +3,7 @@ import { LayoutDashboard, CreditCard, Receipt, BarChart3, Settings, Plus, Bell, 
 import { useState, useEffect, useRef } from 'react'
 
 import './App.css'
-
+import InternetClock from './components/InternetClock';
 import { convertDataByMode } from './components/dataConverter';
 import MyButton from './components/MyButton';
 import DashboardView from './pages/DashboardView';
@@ -146,6 +146,7 @@ return (
 
   {/* दाहिना हिस्सा: बेल और यूजर आइकॉन */}
   <div className="flex items-center gap-4">
+    <InternetClock />
     {/* बेल आइकॉन (Lucide-react से Bell इम्पोर्ट करना न भूलें) */}
     <Bell className="text-gray-500 cursor-pointer" size={24} />
     
