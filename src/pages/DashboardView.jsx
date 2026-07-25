@@ -416,7 +416,7 @@ const { tableData: convertedTableData } = convertDataByMode(data, viewMode, 'inc
                       const { payload } = entry;
                       if (!payload || payload.value === undefined) return null;
                       return (
-                      <span className="text-sm text-gray-700 font-medium inline-flex justify-between w-48 pr-4">
+                      <span className="text-sm text-gray-700 font-medium inline-flex justify-between w-30 pr-4">
                         <span>{payload.name}</span>
                         <span className="font-semibold">₹{payload.value.toLocaleString()}</span>
                       </span>
