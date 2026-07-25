@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutDashboard, Receipt, BarChart3, Settings, Plus, Bell, User, Menu, X  } from 'lucide-react';
+import { LayoutDashboard, CreditCard, Receipt, BarChart3, Settings, Plus, Bell, User, Menu, X  } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react'
 
 import './App.css'
@@ -8,6 +8,7 @@ import { convertDataByMode } from './components/dataConverter';
 import MyButton from './components/MyButton';
 import DashboardView from './pages/DashboardView';
 import TransactionsView from './pages/TransactionsView';
+import LoanManager from './pages/loanManagers';
 
 const MONTHS_LIST = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Total'];
 
@@ -24,7 +25,7 @@ const MONTHS_LIST = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Se
   const [selectedMonth, setSelectedMonth] = useState('Jan')
   const [incomeInput, setIncomeInput] = useState('')
   const [isSaveDisabled, setIsSaveDisabled] = useState(true);
-  const [activeTab, setActiveTab] = useState('dashboard'); // 'dashboard' या 'transactions'
+  const [activeTab, setActiveTab] = useState('dashboard'); // 'dashboard' या 'transactions' loanManager
   
   const [viewMode, setViewMode] = useState('yearly'); // 'daily', 'yearly', 'final'
   const [dateInput, setDateInput] = useState(''); // YYYY-MM-DD फॉर्मेट के लिए
@@ -224,6 +225,13 @@ return (
           >
             <Receipt size={20}/> Transactions
           </div>
+          <div     
+            className={`cursor-pointer flex items-center gap-3 ${activeTab === 'transactions' ? 'text-blue-600 font-bold' : 'text-gray-600'}`} 
+            onClick={() => setActiveTab('loanManager')}
+          >
+            <CreditCard size={20} />
+            Loan Managers
+          </div>
 
           <div className="flex items-center gap-3 text-gray-600"><BarChart3 size={20}/> Reports</div>
           <div className="flex items-center gap-3 text-gray-600"><Settings size={20}/> Settings</div>
@@ -249,7 +257,7 @@ return (
   <div> 
     {activeTab === 'dashboard' && <DashboardView data={databaseData} viewMode={viewMode} />}
     {activeTab === 'transactions' && <TransactionsView data={databaseData} />}
-    
+    {activeTab === 'loanManager' && <LoanManager />}
   </div>
 
 </main>

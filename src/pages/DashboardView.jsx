@@ -9,17 +9,17 @@ import { useState, useEffect, useRef } from 'react'
 
 // --- डेटा और रंग ---
 const originalPieData = [
-  { name: 'Rent', value: 40 },
-  { name: 'Food', value: 30 },
-  { name: 'Travel', value: 20 },
-  { name: 'Fun', value: 10 },
+  { name: 'Rent', value: 4000 },
+  { name: 'Food', value: 3000 },
+  { name: 'Travel', value: 2000 },
+  { name: 'Fun', value: 1000 },
 ];
 
 const originalLoanData = [
-  { name: 'रामू (Ramu)', value: 40000, interest: '3%' },
-  { name: 'श्याम (Shyam)', value: 30000, interest: '2%' },
-  { name: 'श्याम (Shyam)', value: 30000, interest: '2%' },
-  { name: 'मोहन (Mohan)', value: 85000, interest: '0%' },
+  { name: 'रामू (Ramu)', value: 9000, interest: '3%' },
+  { name: 'बसबरीया (Bsbriya)', value: 18000, interest: '3%' },
+  { name: 'श्याम (Shyam)', value: 37000, interest: '2%' },
+  { name: 'मोहन (Mohan)', value: 48000, interest: '0%' },
 ];
 
 const COLORS = ['#F59E0B', '#10B981', '#3B82F6', '#EF4444'];
@@ -325,7 +325,15 @@ const { tableData: convertedTableData } = convertDataByMode(data, viewMode, 'inc
                 </h3>
             <ResponsiveContainer width="100%" height={200}>
               <PieChart>
-                <Pie data={loanData} innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="value">
+                <Pie 
+                  data={loanData} 
+                  innerRadius={58} 
+                  outerRadius={83} 
+                  paddingAngle={0} 
+                  dataKey="value"
+                  stroke="#ffffff"
+                  strokeWidth={5}
+                  >
                   {loanData.map((entry, index) => <Cell key={index} fill={COLORS[index]} />)}
                     <LabelList 
                     dataKey="interest" 
