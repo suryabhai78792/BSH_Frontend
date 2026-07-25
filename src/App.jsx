@@ -150,7 +150,7 @@ return (
         <div className="min-h-screen pb-10 bg-white overflow-y-auto">
           
           {/* मोबाइल पोर्ट्रेट का मुख्य कंटेंट यहाँ दिखेगा */}
-          <main>
+          <main className="p-4 px-0">
             {activeTab === 'dashboard' && <DashboardView data={databaseData} viewMode={viewMode} />}
             {activeTab === 'transactions' && <TransactionsView data={databaseData} />}
             {activeTab === 'loanManager' && <LoanManager />}
