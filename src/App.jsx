@@ -85,7 +85,7 @@ const MONTHS_LIST = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Se
 
         let viewportMeta = document.querySelector("meta[name=viewport]") || document.createElement('meta');
         viewportMeta.name = "viewport";
-        viewportMeta.content = "width=1280";
+        viewportMeta.content = "width=1280 initial-scale=0,75";
         if (!viewportMeta.parentNode) document.head.appendChild(viewportMeta);
 
 
@@ -213,7 +213,7 @@ return (
         {deviceStatus === 'mobile-portrait' && <span>मोबाइल पोर्ट्रेट व्यू</span>}
         {deviceStatus === 'mobile-landscape' && <span>मोबाइल लैंडस्केप व्यू</span>}
         {deviceStatus === 'tablet' && <span>टैबलेट व्यू</span>}
-        {deviceStatus === 'desktop' && <span>डेस्कटॉप मोड a</span>}
+        {deviceStatus === 'desktop' && <span>डेस्कटॉप मोड b</span>}
       </div>
     </header>
 
