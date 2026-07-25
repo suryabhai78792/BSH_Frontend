@@ -326,83 +326,86 @@ const { tableData: convertedTableData } = convertDataByMode(data, viewMode, 'inc
         </div>
       )}
 
-  {/* 1. केवल एक बार StatsCard कॉल करें */}
-  <StatsCard income={income} expense={expense} budget={budget} savings={savings} loan={loan} />
-    <div className=" rounded-xl mb-5" >
-      {/* यहाँ अपना चार्ट या डैशबोर्ड वाला कोड लिखें */}
-        {/* Charts Section */}
-        {/* 4. चार्ट्स का भाग */}
-        <div className="grid grid-cols-3 gap-6">
-          {/* लाइन चार्ट भाग */}
-          <div className="col-span-2 bg-white p-6 rounded-xl border border-gray-300">        
-            <h3 style={{ color: "#1a237e", marginTop: "0", marginBottom: "15px", fontSize: "16px", textAlign: "left" }}>वार्षिक इनकम प्रोग्रेस ग्राफ़ (प्रत्येक 5s में रीस्टार्ट) 📈</h3>
-          <div className="chart-container" style={{ 
-            height: window.innerWidth < 600 ? "200px" : "300px", 
-            position: "relative" 
-            }}>
-            {/* लोडिंग व्हील ओवरले */}
-            {isLoading && (
-              <div className="loading-overlay">
-                <div className="spinner"></div>
-                <p>सर्वर जाग रहा है, कृपया प्रतीक्षा करें... ⏳</p>
-              </div>
-              )}
-            <canvas ref={canvasRef} id="incomeChart"></canvas>            
-          </div>
-            {/* यहाँ आप Recharts का LineChart डाल सकते हैं */}
-          </div>
-             {/* पाई चार्ट भाग */}
-          <div className="bg-white p-6 rounded-xl border border-gray-300">
-                <h3 className="font-bold mb-2 flex flex-col">
-                  <span className="text-gray-900 text-base">लोन का वर्गीकरण</span>
-                  <span className="text-gray-500 text-sm font-normal">(Category-wise Breakdown of Loans)</span>
-                </h3>
-            <ResponsiveContainer width="100%" height={200}>
-              <PieChart>
-                <Pie 
-                  data={loanData} 
-                  innerRadius={58} 
-                  outerRadius={83} 
-                  paddingAngle={0} 
-                  dataKey="value"
-                  stroke="#ffffff"
-                  strokeWidth={5}
-                  >
-                  {loanData.map((entry, index) => <Cell key={index} fill={COLORS[index]} />)}
-                    <LabelList 
-                    dataKey="interest" 
-                    position="inside" 
+{/*=========================================================================================================*/}
+      {/* 4. डेस्कटॉप मोड (या लैपटॉप और मोबाइल में डेस्कटॉप साइट + लैंडस्केप) के लिए लेआउट */}
+{/*=========================================================================================================*/}     
+      {deviceView === 'desktop' && (
+      <>
+      <StatsCard income={income} expense={expense} budget={budget} savings={savings} loan={loan} />
+      <div className=" rounded-xl mb-5" >
+        {/* यहाँ अपना चार्ट या डैशबोर्ड वाला कोड लिखें */}
+          {/* Charts Section */}
+          {/* 4. चार्ट्स का भाग */}
+          <div className="grid grid-cols-3 gap-6">
+            {/* लाइन चार्ट भाग */}
+            <div className="col-span-2 bg-white p-6 rounded-xl border border-gray-300">        
+              <h3 style={{ color: "#1a237e", marginTop: "0", marginBottom: "15px", fontSize: "16px", textAlign: "left" }}>वार्षिक इनकम प्रोग्रेस ग्राफ़ (प्रत्येक 5s में रीस्टार्ट) 📈</h3>
+            <div className="chart-container" style={{ 
+              height: window.innerWidth < 600 ? "200px" : "300px", 
+              position: "relative" 
+              }}>
+              {/* लोडिंग व्हील ओवरले */}
+              {isLoading && (
+                <div className="loading-overlay">
+                  <div className="spinner"></div>
+                  <p>सर्वर जाग रहा है, कृपया प्रतीक्षा करें... ⏳</p>
+                </div>
+                )}
+              <canvas ref={canvasRef} id="incomeChart"></canvas>            
+            </div>
+              {/* यहाँ आप Recharts का LineChart डाल सकते हैं */}
+            </div>
+              {/* पाई चार्ट भाग */}
+            <div className="bg-white p-6 rounded-xl border border-gray-300">
+                  <h3 className="font-bold mb-2 flex flex-col">
+                    <span className="text-gray-900 text-base">लोन का वर्गीकरण</span>
+                    <span className="text-gray-500 text-sm font-normal">(Category-wise Breakdown of Loans)</span>
+                  </h3>
+              <ResponsiveContainer width="100%" height={200}>
+                <PieChart>
+                  <Pie 
+                    data={loanData} 
+                    innerRadius={58} 
+                    outerRadius={83} 
+                    paddingAngle={0} 
+                    dataKey="value"
+                    stroke="#ffffff"
+                    strokeWidth={5}
+                    >
+                    {loanData.map((entry, index) => <Cell key={index} fill={COLORS[index]} />)}
+                      <LabelList 
+                      dataKey="interest" 
+                      position="inside" 
 
-                    fill="#ffffff" 
-                    stroke="none"
-                    fontSize={12}
-                    fontWeight="bold"
+                      fill="#ffffff" 
+                      stroke="none"
+                      fontSize={12}
+                      fontWeight="bold"
+                      />
+                  </Pie>
+                    <Tooltip />
+                    <Legend 
+                      layout="vertical" 
+                      align="right" 
+                      verticalAlign="middle" 
+                      iconType="circle"
+
+                      formatter={(value, entry) => {
+                        const { payload } = entry;
+                        if (!payload || payload.value === undefined) return null;
+                        return (
+                        <span className="text-sm text-gray-700 font-medium inline-flex justify-between w-30 pr-4">
+                          <span>{payload.name}</span>
+                          <span className="font-semibold">₹{payload.value.toLocaleString()}</span>
+                        </span>
+                        );
+                      }}
                     />
-                </Pie>
-                  <Tooltip />
-                  <Legend 
-                    layout="vertical" 
-                    align="right" 
-                    verticalAlign="middle" 
-                    iconType="circle"
-
-                    formatter={(value, entry) => {
-                      const { payload } = entry;
-                      if (!payload || payload.value === undefined) return null;
-                      return (
-                      <span className="text-sm text-gray-700 font-medium inline-flex justify-between w-30 pr-4">
-                        <span>{payload.name}</span>
-                        <span className="font-semibold">₹{payload.value.toLocaleString()}</span>
-                      </span>
-                      );
-                    }}
-                  />
-              </PieChart>
-            </ResponsiveContainer>
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
           </div>
-        </div>
-</div>
-
+    </div>
 
     <div className=" rounded-xl " >
         <div className="grid grid-cols-3 gap-6">
@@ -463,9 +466,12 @@ const { tableData: convertedTableData } = convertDataByMode(data, viewMode, 'inc
             </div>          
           
         </div>
-    </div>
+      </div>
 
-       </div>
+      </>
+      )}
+
+</div>
 
   );
 };
