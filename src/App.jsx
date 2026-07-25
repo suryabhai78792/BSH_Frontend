@@ -201,10 +201,10 @@ const MONTHS_LIST = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Se
   };
 
 return (
-<div className="h-screen flex flex-col bg-gray-50 overflow-hidden">
+<div className="min-h-screen flex flex-col bg-gray-50">
     
     {/* मुख्य कंटेंट जहाँ आप अलग-अलग लेआउट रेंडर करेंगे */}
-    <div className="flex-1 overflow-hidden">
+    <div className="flex-1">
 {/*=========================================================================================================*/}
       {/* 1. मोबाइल पोर्ट्रेट व्यू के लिए लेआउट */}
 {/*=========================================================================================================*/}      
@@ -251,7 +251,7 @@ return (
       {deviceStatus === 'desktop' && (
     
       // पूरे पेज को एक फिक्स्ड हाइट दें ताकि बाहर वाला स्क्रोल बार न आए
-      <div className="h-screen flex flex-col bg-gray-50 overflow-hidden">
+      <div className="minh-screen flex flex-col bg-gray-50">
       {/* आपका डेस्कटॉप वाला लेआउट */}
 
 
