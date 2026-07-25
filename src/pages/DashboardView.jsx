@@ -1,6 +1,7 @@
 import React from 'react';
 import Chart from 'chart.js/auto' // Chart.js को इम्पोर्ट किया
 import './DashboardView.css'
+import dateTime from '../components/dateTime';
 import StatsCard from '../components/StatsCard';
 import { useDeviceView } from '../components/useDeviceView';
 import { convertDataByMode } from '../components/dataConverter';
@@ -291,7 +292,8 @@ const { tableData: convertedTableData } = convertDataByMode(data, viewMode, 'inc
           }
         }); // यहाँ चार्ट का कोड खत्म हुआ.
   }
-
+  
+  const { formattedDate, formattedTime } = dateTime();
   return (
    <div >
 {/*=========================================================================================================*/}
@@ -302,8 +304,14 @@ const { tableData: convertedTableData } = convertDataByMode(data, viewMode, 'inc
           <header className="fixed top-0 left-0 right-0 z-50 bg-white py-3 px-6 border-b border-gray-300 flex items-center justify-between ">
             
             {/* बायां हिस्सा: टाइटल */}
-            <h1 className="text-2xl font-bold text-blue-600">Finance Tracker</h1>
-
+            {/* तारीख और महीना (अक्षरों में) */}
+            <div className="text-sm font-medium text-gray-600 border-r pr-3 border-gray-200">
+              {formattedDate}
+            </div>
+            {/* बड़ा और बोल्ड लाइव टाइम */}
+            <div className="text-lg font-bold text-gray-900 tracking-wide">
+              {formattedTime}
+            </div>
             {/* दाहिना हिस्सा: बेल और यूजर आइकॉन */}
             <div className="flex items-center gap-4">
           

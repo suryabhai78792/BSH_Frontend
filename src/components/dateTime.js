@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-export default function InternetClock() {
+export default function dateTime() {
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
 
   useEffect(() => {
@@ -28,20 +28,5 @@ export default function InternetClock() {
     second: '2-digit',
   });
 
-  return (
-    <div className="flex items-center gap-3 bg-white p-4 py-1 rounded-xl border border-gray-200 shadow-sm">
-      {/* ग्रीन इंडिकेटर डॉट */}
-      <span className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"></span>
-
-      {/* तारीख और महीना (अक्षरों में) */}
-      <div className="text-sm font-medium text-gray-600 border-r pr-3 border-gray-200">
-        📅 {formattedDate}
-      </div>
-
-      {/* बड़ा और बोल्ड लाइव टाइम */}
-      <div className="text-lg font-bold text-gray-900 tracking-wide">
-        ⏰ {formattedTime}
-      </div>
-</div>
-  );
-}
+return { formattedDate, formattedTime };
+};

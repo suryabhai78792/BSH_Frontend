@@ -3,7 +3,7 @@ import { LayoutDashboard, CreditCard, Receipt, BarChart3, Settings, Plus, Bell, 
 import { useState, useEffect, useRef } from 'react'
 
 import './App.css'
-import InternetClock from './components/InternetClock';
+import dateTime from './components/dateTime';
 import { useDeviceView } from './components/useDeviceView';
 import { convertDataByMode } from './components/dataConverter';
 import MobileNavbar from './components/MobileNavbar';
@@ -137,6 +137,9 @@ const MONTHS_LIST = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Se
     document.addEventListener('mouseup', mouseUpHandler);
   };
 
+
+  const { formattedDate, formattedTime } = dateTime();
+
 return (
 <div className="min-h-screen flex flex-col bg-gray-50">
     
@@ -211,7 +214,26 @@ return (
 
     {/* दाहिना हिस्सा: बेल और यूजर आइकॉन */}
     <div className="flex items-center gap-4">
-      <InternetClock />
+      
+
+    <div className="flex items-center gap-3 bg-white p-4 py-1 rounded-xl border border-gray-200 shadow-sm">
+      {/* ग्रीन इंडिकेटर डॉट */}
+      <span className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"></span>
+
+      {/* तारीख और महीना (अक्षरों में) */}
+      <div className="text-sm font-medium text-gray-600 border-r pr-3 border-gray-200">
+        📅 {formattedDate}
+      </div>
+
+      {/* बड़ा और बोल्ड लाइव टाइम */}
+      <div className="text-lg font-bold text-gray-900 tracking-wide">
+        ⏰ {formattedTime}
+      </div>
+    </div>
+
+
+
+      
       {/* बेल आइकॉन (Lucide-react से Bell इम्पोर्ट करना न भूलें) */}
       <Bell className="text-gray-500 cursor-pointer" size={24} />
       
