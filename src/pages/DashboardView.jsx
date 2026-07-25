@@ -16,10 +16,10 @@ const originalPieData = [
 ];
 
 const originalLoanData = [
-  { name: 'रामू (Ramu)', value: 9000, interest: '3%' },
-  { name: 'बसबरीया (Bsbriya)', value: 18000, interest: '3%' },
-  { name: 'श्याम (Shyam)', value: 37000, interest: '2%' },
-  { name: 'मोहन (Mohan)', value: 48000, interest: '0%' },
+  { name: 'रामू', value: 9000, interest: '3%' },
+  { name: 'बसबरीया', value: 18000, interest: '3%' },
+  { name: 'श्याम', value: 37000, interest: '2%' },
+  { name: 'मोहन', value: 48000, interest: '0%' },
 ];
 
 const COLORS = ['#F59E0B', '#10B981', '#3B82F6', '#EF4444'];
