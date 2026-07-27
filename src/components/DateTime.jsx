@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-export default function dateTime() {
+export default function DateTime({ showIcon = false }) {
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
 
   useEffect(() => {
@@ -28,5 +28,22 @@ export default function dateTime() {
     second: '2-digit',
   });
 
-return { formattedDate, formattedTime };
+return (
+<>
+        {/* ग्रीन इंडिकेटर डॉट */}
+        {showIcon && (
+        <span className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"></span>
+          )}
+  
+        {/* तारीख और महीना (अक्षरों में) */}
+        <div className="text-sm font-medium text-gray-600 border-r pr-3 border-gray-200">
+          {showIcon && "📅 "} {formattedDate}
+        </div>
+  
+        {/* बड़ा और बोल्ड लाइव टाइम */}
+        <div className="text-lg font-bold text-gray-900 tracking-wide">
+          {showIcon && "⏰ "}{formattedTime}
+        </div>
+</>
+ );
 };

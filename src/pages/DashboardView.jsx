@@ -1,10 +1,11 @@
 import React from 'react';
 import Chart from 'chart.js/auto' // Chart.js को इम्पोर्ट किया
 import './DashboardView.css'
-import dateTime from '../components/dateTime';
+import DateTime from '../components/DateTime';
 import StatsCard from '../components/StatsCard';
 import { useDeviceView } from '../components/useDeviceView';
 import { convertDataByMode } from '../components/dataConverter';
+import PieChartCard from '../components/PieChartCard';
 import ReusableTable from '../components/ReusableTable';
 import { PieChart, Pie, Cell, ResponsiveContainer,Legend, Tooltip, LabelList } from 'recharts';
 import {Bell, User} from 'lucide-react';
@@ -25,7 +26,7 @@ const originalLoanData = [
   { name: 'मोहन', value: 48000, interest: '0%' },
 ];
 
-const COLORS = ['#F59E0B', '#10B981', '#3B82F6', '#EF4444'];
+
 
 const DashboardView = ({ data, viewMode }) => {
 const deviceView = useDeviceView();
@@ -67,21 +68,9 @@ const { tableData: convertedTableData } = convertDataByMode(data, viewMode, 'inc
   const startChartAutoLoop = () => {
     renderLiveChart();
 
-    // 🎯 यहाँ जादू है: पहले पाई डेटा को खाली (Delete) किया, फिर तुरंत नया डेटा सेट किया
-    setPieData([]); 
-    setTimeout(() => setPieData(originalPieData), 10);
-    setLoanData([]);
-    setTimeout(() => setLoanData(originalLoanData), 10);
-
     if (chartLoopInterval.current) clearInterval(chartLoopInterval.current);
     chartLoopInterval.current = setInterval(() => {
       renderLiveChart();
-
-    // 🎯 हर 12 सेकंड में पाई चार्ट का डेटा एक पल के लिए डिलीट होगा और फिर वापस आएगा
-    setPieData([]); 
-    setTimeout(() => setPieData(originalPieData), 10);
-    setLoanData([]);
-    setTimeout(() => setLoanData(originalLoanData), 10);
     }, 12000);
   };
 
@@ -293,7 +282,7 @@ const { tableData: convertedTableData } = convertDataByMode(data, viewMode, 'inc
         }); // यहाँ चार्ट का कोड खत्म हुआ.
   }
   
-  const { formattedDate, formattedTime } = dateTime();
+
   return (
    <div >
 {/*=========================================================================================================*/}
@@ -309,14 +298,7 @@ const { tableData: convertedTableData } = convertDataByMode(data, viewMode, 'inc
               <User className="text-gray-600" size={20} />
             </div>
 
-            {/* तारीख और महीना (अक्षरों में) */}
-            <div className="text-sm font-medium text-gray-600 border-r pr-3 border-gray-200">
-              {formattedDate}
-            </div>
-            {/* बड़ा और बोल्ड लाइव टाइम */}
-            <div className="text-lg font-bold text-gray-900 tracking-wide">
-              {formattedTime}
-            </div>
+          <DateTime />
             {/* दाहिना हिस्सा: बेल और यूजर आइकॉन */}
             <div className="flex items-center gap-4">         
               {/* बेल आइकॉन (Lucide-react से Bell इम्पोर्ट करना न भूलें) */}
@@ -326,6 +308,14 @@ const { tableData: convertedTableData } = convertDataByMode(data, viewMode, 'inc
           </header>
 
           <StatsCard income={income} expense={expense} budget={budget} savings={savings} loan={loan} />
+        
+        
+        
+        
+        
+        
+        
+        
         </div>
 
       )}
@@ -383,124 +373,37 @@ const { tableData: convertedTableData } = convertDataByMode(data, viewMode, 'inc
             </div>
               {/* यहाँ आप Recharts का LineChart डाल सकते हैं */}
             </div>
-              {/* पाई चार्ट भाग */}
-            <div className="bg-white p-6 rounded-xl border border-gray-300">
-                  <h3 className="font-bold mb-2 flex flex-col">
-                    <span className="text-gray-900 text-base">लोन का वर्गीकरण</span>
-                    <span className="text-gray-500 text-sm font-normal">(Category-wise Breakdown of Loans)</span>
-                  </h3>
-              <ResponsiveContainer width="100%" height={200}>
-                <PieChart>
-                  <Pie 
-                    data={loanData} 
-                    innerRadius={58} 
-                    outerRadius={83} 
-                    paddingAngle={0} 
-                    dataKey="value"
-                    stroke="#ffffff"
-                    strokeWidth={5}
-                    >
-                    {loanData.map((entry, index) => <Cell key={index} fill={COLORS[index]} />)}
-                      <LabelList 
-                      dataKey="interest" 
-                      position="inside" 
 
-                      fill="#ffffff" 
-                      stroke="none"
-                      fontSize={12}
-                      fontWeight="bold"
-                      />
-                  </Pie>
-                    <Tooltip />
-                    <Legend 
-                      layout="vertical" 
-                      align="right" 
-                      verticalAlign="middle" 
-                      iconType="circle"
-
-                      formatter={(value, entry) => {
-                        const { payload } = entry;
-                        if (!payload || payload.value === undefined) return null;
-                        return (
-                        <span className="text-sm text-gray-700 font-medium inline-flex justify-between w-30 pr-4">
-                          <span>{payload.name}</span>
-                          <span className="font-semibold">₹{payload.value.toLocaleString()}</span>
-                        </span>
-                        );
-                      }}
-                    />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
+            {/* पाई चार्ट भाग */}
+            <PieChartCard 
+              title="लोन का वर्गीकरण" 
+              subtitle="(Category-wise Breakdown of Loans)" 
+              data={loanData}                    
+              showPercentage={false}  
+              isDonut={true}  
+            />          
+        </div>
     </div>
+
 
     <div className=" rounded-xl " >
         <div className="grid grid-cols-3 gap-6">
           <div className="col-span-2 bg-white p-6 rounded-xl border border-gray-300">        
             <ReusableTable data={convertedTableData} />
           </div>
-            <div className="bg-white p-6 rounded-xl border border-gray-300">
-                <h3 className="font-bold mb-2 flex flex-col">
-                  <span className="text-gray-900 text-base">मंथली खर्च का वर्गीकरण</span>
-                  <span className="text-gray-500 text-sm font-normal">(Monthly Expense Category-wise Breakdown)</span>
-                </h3>
-              <ResponsiveContainer width="100%" height={200}>
-                <PieChart>
-                  <Pie 
-                    data={pieData} 
-                    innerRadius={0} 
-                    outerRadius={80} 
-                    paddingAngle={0} 
-                    dataKey="value"
-                    stroke="#ffffff"
-                    strokeWidth={2}
-                    isAnimationActive={true}
-                    animationDuration={1000}
-                  >
-                    {pieData.map((entry, index) => (
-                      <Cell key={index} fill={COLORS[index]} />
-                    ))}
-                    <LabelList 
-                    dataKey="value" 
-                    position="inside" 
-                    formatter={(value) => `${value}%`} 
-                    fill="#ffffff" 
-                    stroke="none"
-                    fontSize={12}
-                    fontWeight="bold"
-                    />
-                  </Pie>
-                  <Tooltip />
-                  <Legend 
-                    layout="vertical" 
-                    align="right" 
-                    verticalAlign="middle" 
-                    iconType="circle"
-                    formatter={(value, entry) => {
-                      const { payload } = entry;
-                      if (!payload || payload.value === undefined) return null;
-                      return (
-                      <span className="text-sm text-gray-700 font-medium inline-flex justify-between w-30 pr-4">
-                        <span>{payload.name}</span>
-                        <span className="font-semibold">₹{payload.value.toLocaleString()}</span>
-                      </span>
-                      );
-                    }}
-                  />
 
-                </PieChart>
-              </ResponsiveContainer>
-            </div>          
-          
+            <PieChartCard 
+              title="लोन का वर्गीकरण" 
+              subtitle="(Category-wise Breakdown of Loans)" 
+              data={loanData}                    
+              showPercentage={true}  
+              isDonut={false}  
+            /> 
         </div>
       </div>
-
       </>
       )}
-
 </div>
-
   );
 };
 export default DashboardView;
