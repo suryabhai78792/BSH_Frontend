@@ -210,7 +210,7 @@ return (
   <header className="bg-white pt-3 pb-3 p-6 border-b border-gray-300 flex-shrink-0 flex items-center justify-between">
     
     {/* बायां हिस्सा: टाइटल */}
-    <h1 className="text-2xl font-bold text-blue-600">Finance Tracker .</h1>
+    <h1 className="text-2xl font-bold text-blue-600">Finance Tracker</h1>
 
     {/* दाहिना हिस्सा: बेल और यूजर आइकॉन */}
     <div className="flex items-center gap-4">

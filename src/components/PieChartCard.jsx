@@ -45,9 +45,20 @@ export default function PieChartCard({ title, subtitle, data, showPercentage = t
             ))}
 
             <LabelList 
-              dataKey={showPercentage ? "value" : "interest"} 
+              dataKey={showPercentage ? "interest" : "value"} 
               position="inside" 
-              formatter={(value) => showPercentage ? `${value}%` : value} 
+              formatter={(value) => {
+                // अगर showPercentage true है, तो सीधा interest (या जो डेटा में है) दिखाएगा
+                if (showPercentage) {
+                  return value; 
+                }
+                
+                // अगर showPercentage false है, तब कुल योग का प्रतिशत (Percentage) कैलकुलेट करके दिखाएगा
+                const total = data.reduce((sum, entry) => sum + entry.value, 0);
+                const percentage = Math.round((value / total) * 100);
+                return `${percentage}%`;
+              }}
+
               fill="#ffffff" 
               stroke="none"
               fontSize={12}

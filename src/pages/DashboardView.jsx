@@ -379,7 +379,7 @@ const { tableData: convertedTableData } = convertDataByMode(data, viewMode, 'inc
               title="लोन का वर्गीकरण" 
               subtitle="(Category-wise Breakdown of Loans)" 
               data={loanData}                    
-              showPercentage={false}  
+              showPercentage={true}  
               isDonut={true}  
             />          
         </div>
@@ -393,10 +393,10 @@ const { tableData: convertedTableData } = convertDataByMode(data, viewMode, 'inc
           </div>
 
             <PieChartCard 
-              title="लोन का वर्गीकरण" 
-              subtitle="(Category-wise Breakdown of Loans)" 
-              data={loanData}                    
-              showPercentage={true}  
+              title="मंथली खर्च का वर्गीकरण" 
+              subtitle="(Monthly Expense Category-wise Breakdown)" 
+              data={pieData}                    
+              showPercentage={false}  
               isDonut={false}  
             /> 
         </div>
