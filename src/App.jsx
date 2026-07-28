@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutDashboard, CreditCard, Receipt, BarChart3, Settings, Plus, Bell, User, Menu, X  } from 'lucide-react';
+import { LayoutDashboard, CreditCard, Receipt, BarChart3, Settings, Plus, Bell, User, Menu, X, ArrowLeftRight, Wallet, Target, TrendingUp, FileText, History, Clock  } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react'
 
 import './App.css'
@@ -9,7 +9,9 @@ import { convertDataByMode } from './components/dataConverter';
 import MobileNavbar from './components/MobileNavbar';
 import MyButton from './components/MyButton';
 import DashboardView from './pages/DashboardView';
+import ProfileModal from './pages/ProfileModal'; // अपनी फाइल का सही पाथ दें
 import AddTransactionPage from './pages/AddTransactionPage';
+
 
 import TransactionsView from './pages/TransactionsView';
 import LoanManager from './pages/loanManagers';
@@ -23,6 +25,7 @@ const MONTHS_LIST = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Se
 
   const deviceView = useDeviceView();
   const [databaseData, setDatabaseData] = useState({});
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const latestDataRef = useRef({}) // 🔥 लेटेस्ट डेटा को बिना री-रेंडर ट्रैक करने के लिए
   const [selectedYear, setSelectedYear] = useState('2025')
@@ -176,8 +179,13 @@ return (
       <Bell className="text-gray-500 cursor-pointer" size={24} />
       
       {/* यूजर आइकॉन */}
-      <div className="bg-gray-200 p-2 rounded-full cursor-pointer">
-        <User className="text-gray-600" size={20} />
+      <div className="bg-gray-200 p-2 rounded-full cursor-pointer relative">
+        <User className="text-gray-600" size={20} onClick={() => setIsProfileOpen(true)}  />
+        {/* 3. प्रोफाइल मॉडल को यहाँ कॉल करें */}
+        <ProfileModal 
+          isOpen={isProfileOpen} 
+          onClose={() => setIsProfileOpen(false)} 
+        />
       </div>
     </div>
     
@@ -241,8 +249,8 @@ return (
             >
               <Receipt size={20}/> Transactions
             </div>
-            <div className="flex items-center gap-3 text-gray-600"><BarChart3 size={20}/> Income & Expense</div>
-            <div className="flex items-center gap-3 text-gray-600"><BarChart3 size={20}/> Budgets & Goals</div>
+            <div className="flex items-center gap-3 text-gray-600"><Wallet size={20}/> Income & Expense</div>
+            <div className="flex items-center gap-3 text-gray-600"><Target size={20}/> Budgets & Goals</div>
 
             <div     
               className={`cursor-pointer flex items-center gap-3 ${activeTab === 'loanManager' ? 'text-blue-600 font-bold' : 'text-gray-600'}`} 
@@ -252,10 +260,9 @@ return (
               Loan Managers
             </div>
 
-            <div className="flex items-center gap-3 text-gray-600"><BarChart3 size={20}/> Investments</div>
-            <div className="flex items-center gap-3 text-gray-600"><BarChart3 size={20}/> Reports</div>
-            <div className="flex items-center gap-3 text-gray-600"><BarChart3 size={20}/> History</div>
-            <div className="flex items-center gap-3 text-gray-600"><Settings size={20}/> Settings</div>
+            <div className="flex items-center gap-3 text-gray-600"><TrendingUp size={20}/> Investments</div>
+            <div className="flex items-center gap-3 text-gray-600"><FileText size={20}/> Reports</div>
+            <div className="flex items-center gap-3 text-gray-600"><Clock size={20}/> History</div>
         
           </nav>
 
@@ -280,6 +287,8 @@ return (
     </div>
 
   </main>
+
+
 
 
 
