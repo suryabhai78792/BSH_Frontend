@@ -9,6 +9,8 @@ import { convertDataByMode } from './components/dataConverter';
 import MobileNavbar from './components/MobileNavbar';
 import MyButton from './components/MyButton';
 import DashboardView from './pages/DashboardView';
+import AddTransactionPage from './pages/AddTransactionPage';
+
 import TransactionsView from './pages/TransactionsView';
 import LoanManager from './pages/loanManagers';
 
@@ -25,12 +27,12 @@ const MONTHS_LIST = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Se
   const latestDataRef = useRef({}) // 🔥 लेटेस्ट डेटा को बिना री-रेंडर ट्रैक करने के लिए
   const [selectedYear, setSelectedYear] = useState('2025')
   const [selectedMonth, setSelectedMonth] = useState('Jan')
-  const [incomeInput, setIncomeInput] = useState('')
-  const [isSaveDisabled, setIsSaveDisabled] = useState(true);
+
+  
   const [activeTab, setActiveTab] = useState('dashboard'); // 'dashboard' या 'transactions' loanManager
   
   const [viewMode, setViewMode] = useState('yearly'); // 'daily', 'yearly', 'final'
-  const [dateInput, setDateInput] = useState(''); // YYYY-MM-DD फॉर्मेट के लिए
+  
   const [isLoading, setIsLoading] = useState(true); // शुरू में लोडिंग दिखाएं
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -38,7 +40,7 @@ const MONTHS_LIST = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Se
 
 
   const modalContainerRef = useRef(null)
-  const modalRef = useRef(null);
+
 
   // API URLs
   const GET_DATA_URL = 'https://my-income-backend.onrender.com/getdata'
@@ -70,33 +72,6 @@ const MONTHS_LIST = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Se
     loadTableData();
   }, []);
 
-        // Input Validation Effect
-  useEffect(() => {
-    if (incomeInput.trim() !== "" && dateInput.trim() !== "") {
-      setIsSaveDisabled(false);
-    } else {
-      setIsSaveDisabled(true);
-    }
-  }, [incomeInput, dateInput]);
-
-  // API: Save Data
-  const saveData = () => {
-    fetch('https://my-income-backend.onrender.com/save', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ date: dateInput, income: Number(incomeInput) })
-    })
-    .then(res => {
-      if (!res.ok) throw new Error("सेव करने में गड़बड़");
-      setIncomeInput("");
-      setShowModal(false);
-      loadTableData();
-    })
-    .catch(err => {
-      console.error(err);
-      alert("डेटा सेव नहीं हो पाया!");
-    });
-  };
 
 
   // 5. बैकअप डेटा डाउनलोड लॉजिक
@@ -111,31 +86,6 @@ const MONTHS_LIST = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Se
         a.click();
       });
   }
-
-  // 6. ड्रैगेबल मोडल हेडर फंक्शनलिटी (रिएक्ट वे)
-  const handleMouseDown = (e) => {
-    if (window.innerWidth < 600) return; 
-    const container = modalRef.current;
-    if (!container) return;
-
-    let offsetX = e.clientX - container.offsetLeft;
-    let offsetY = e.clientY - container.offsetTop;
-
-    function mouseMoveHandler(e) {
-      container.style.position = "absolute";
-      container.style.left = (e.clientX - offsetX) + "px";
-      container.style.top = (e.clientY - offsetY) + "px";
-      container.style.margin = "0";
-    }
-
-    function mouseUpHandler() {
-      document.removeEventListener('mousemove', mouseMoveHandler);
-      document.removeEventListener('mouseup', mouseUpHandler);
-    }
-
-    document.addEventListener('mousemove', mouseMoveHandler);
-    document.addEventListener('mouseup', mouseUpHandler);
-  };
 
 
 
@@ -291,6 +241,9 @@ return (
             >
               <Receipt size={20}/> Transactions
             </div>
+            <div className="flex items-center gap-3 text-gray-600"><BarChart3 size={20}/> Income & Expense</div>
+            <div className="flex items-center gap-3 text-gray-600"><BarChart3 size={20}/> Budgets & Goals</div>
+
             <div     
               className={`cursor-pointer flex items-center gap-3 ${activeTab === 'loanManager' ? 'text-blue-600 font-bold' : 'text-gray-600'}`} 
               onClick={() => setActiveTab('loanManager')}
@@ -299,7 +252,9 @@ return (
               Loan Managers
             </div>
 
+            <div className="flex items-center gap-3 text-gray-600"><BarChart3 size={20}/> Investments</div>
             <div className="flex items-center gap-3 text-gray-600"><BarChart3 size={20}/> Reports</div>
+            <div className="flex items-center gap-3 text-gray-600"><BarChart3 size={20}/> History</div>
             <div className="flex items-center gap-3 text-gray-600"><Settings size={20}/> Settings</div>
         
           </nav>
@@ -330,54 +285,7 @@ return (
 
         {/* Entry Modal */}
         {showModal && (
-          <div id="entryModal" className="modal" style={{ display: 'flex' }}>
-            <div className="modal-content" id="modalContainer" ref={modalRef}>
-              <div className="modal-header draggable-header" id="modalHeader" onMouseDown={handleMouseDown}>
-                नई एंट्री जोड़ें 📝
-                <span onClick={() => setShowModal(false)} style={{ float: 'right', cursor: 'pointer', fontWeight: 'bold', fontSize: '20px' }}>×</span>
-              </div>
-                            <div className="modal-body">
-                              {/* 1. तारीख चुनने के लिए कैलेंडर बॉक्स */}
-                              <label style={{ display: 'block', marginBottom: '5px', textAlign: 'left', fontWeight: 'bold' }}>तारीख चुनें (Date):</label>
-                              <input 
-                                type="date" 
-                                value={dateInput} 
-                                onChange={(e) => setDateInput(e.target.value)} 
-                                style={{ padding: '8px', marginBottom: '15px', width: '100%', boxSizing: 'border-box' }}
-                              />
-
-                              {/* 2. कमाई की राशि डालने के लिए इनपुट बॉक्स (जो छूट गया था) */}
-                              <label style={{ display: 'block', marginBottom: '5px', textAlign: 'left', fontWeight: 'bold' }}>कमाई की राशि (₹):</label>
-                              <input
-                                type="number"
-                                id="incomeInput"
-                                placeholder="राशि दर्ज करें (जैसे: 5000)"
-                                value={incomeInput}
-                                onChange={(e) => setIncomeInput(e.target.value)}
-                                style={{ padding: '8px', marginBottom: '15px', width: '100%', boxSizing: 'border-box' }}
-                              />
-
-                              {/* 3. सेव करने का बटन */}
-                              <button
-                                className="btn-save"
-                                id="saveBtn"
-                                onClick={saveData}
-                                disabled={isSaveDisabled}
-                                style={{ 
-                                  backgroundColor: isSaveDisabled ? '#ccc' : '#00d2ff', 
-                                  width: '100%', 
-                                  padding: '10px', 
-                                  color: '#fff', 
-                                  border: 'none', 
-                                  cursor: isSaveDisabled ? 'not-allowed' : 'pointer',
-                                  fontWeight: 'bold'
-                                }}
-                              >
-                                सेव करें
-                              </button>
-                            </div>
-            </div>
-          </div>
+<AddTransactionPage showModal={showModal} setShowModal={setShowModal} />
         )}
 
 
