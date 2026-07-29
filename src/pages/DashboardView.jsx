@@ -326,7 +326,7 @@ const { tableData: convertedTableData } = convertDataByMode(data, viewMode, 'inc
         <div 
         ref={scrollRef}
         onScroll={handleScroll}
-        className="flex -space-x-[45%] overflow-x-auto scrollbar-none px-4 py-2 w-full snap-x snap-mandatory"
+        className="flex -space-x-[45%] -my-8 overflow-x-auto scrollbar-none px-4 py-2 w-full snap-x snap-mandatory"
         >
           
           {/* कार्ड 1 */}
@@ -351,34 +351,21 @@ const { tableData: convertedTableData } = convertDataByMode(data, viewMode, 'inc
               isDonut={false}  
             /> 
           </div>
+        </div>
 
-          </div>
-          {/* 2. केवल 2 डॉट्स (Indicators) वाला हिस्सा */}
-          <div className="flex justify-center items-center gap-1.5 my-1">
+          {/* 2. डॉट्स (Indicators) वाला हिस्सा - जो मोबाइल पर दिखेगा */}
+          <div className="flex justify-center mb-2 gap-2 md:hidden lg:hidden" >
             {[0, 1].map((index) => (
               <div 
                 key={index}
-                className={`transition-all duration-300 rounded-full ${
-                  activeIndex === index ? 'bg-blue-600 w-1 h-1' : 'bg-gray-300 w-1 h-1'
+                className={`h-1 w-1 rounded-full transition-all duration-300 ${
+                  activeIndex === index ? 'bg-blue-600 scale-125' : 'bg-gray-300'
                 }`}
               />
             ))}
           </div>
 
-      {/* 2. डॉट्स (Indicators) वाला हिस्सा - जो मोबाइल पर दिखेगा */}
-      <div className="flex justify-center mb-2 gap-2 md:hidden lg:hidden" >
-        {[0, 1].map((index) => (
-          <div 
-            key={index}
-            className={`h-1 w-1 rounded-full transition-all duration-300 ${
-              activeIndex === index ? 'bg-blue-600 scale-125' : 'bg-gray-300'
-            }`}
-          />
-        ))}
       </div>
-
-
-        </div>
 
 
 
