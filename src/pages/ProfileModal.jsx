@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, Settings, Database, LogOut, User } from 'lucide-react';
+import { X, Clock, Settings, Database, LogOut, User } from 'lucide-react';
 
 export default function ProfileModal({ isOpen, onClose }) {
   if (!isOpen) return null;
@@ -30,22 +30,34 @@ export default function ProfileModal({ isOpen, onClose }) {
         <hr className="my-4 h-px border-0 bg-zinc-100" />
 
         {/* प्रोफाइल के अंदर आने वाले मेनू (सेटिंग्स और बैकअप) */}
-        <div className="flex flex-col gap-2.5">
-          <div 
-            onClick={() => alert('Settings clicked')}
-            className="flex cursor-pointer items-center gap-3 rounded-lg p-2.5 text-sm text-zinc-800 transition-colors hover:bg-zinc-100"
-          >
-            <Settings size={18} color="#555" />
-            <span>एप्प सेटिंग्स (Settings)</span>
-          </div>
 
+{/*----------------------------------------------------------------------------------------------------------------*/}
+        <div className="flex flex-col gap-0">
+          <div 
+            onClick={() => alert('History clicked')}
+            className="flex cursor-pointer items-center gap-5 rounded-lg p-2.5 text-sm text-zinc-800 transition-colors hover:bg-zinc-100"
+          >
+            <Clock size={18} color="#555" />
+            <span>History</span>
+          </div>
+{/*----------------------------------------------------------------------------------------------------------------*/}
           <div 
             onClick={() => alert('Backup clicked')}
-            className="flex cursor-pointer items-center gap-3 rounded-lg p-2.5 text-sm text-zinc-800 transition-colors hover:bg-zinc-100"
+            className="flex cursor-pointer items-center gap-5 rounded-lg p-2.5 text-sm text-zinc-800 transition-colors hover:bg-zinc-100"
           >
             <Database size={18} color="#555" />
-            <span>डाटा बैकअप (JSON)</span>
+            <span>Download</span>
           </div>
+{/*----------------------------------------------------------------------------------------------------------------*/}  
+          <div 
+            onClick={() => alert('Settings clicked')}
+            className="flex cursor-pointer items-center gap-5 rounded-lg p-2.5 text-sm text-zinc-800 transition-colors hover:bg-zinc-100"
+          >
+            <Settings size={18} color="#555" />
+            <span>Settings</span>
+          </div>
+{/*----------------------------------------------------------------------------------------------------------------*/}
+        
         </div>
 
         <hr className="my-4 h-px border-0 bg-zinc-100" />

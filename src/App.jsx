@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutDashboard, CreditCard, Receipt, BarChart3, Settings, Plus, Bell, User, Menu, X, ArrowLeftRight, Wallet, Target, TrendingUp, FileText, History, Clock  } from 'lucide-react';
+import { LayoutDashboard, CreditCard, Receipt, BarChart3, Settings, Plus, Bell, User, Menu, X, ArrowLeftRight, Wallet, Target, TrendingUp, FileText, Clock  } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react'
 
 import './App.css'
@@ -249,8 +249,22 @@ return (
             >
               <Receipt size={20}/> Transactions
             </div>
-            <div className="flex items-center gap-3 text-gray-600"><Wallet size={20}/> Income & Expense</div>
-            <div className="flex items-center gap-3 text-gray-600"><Target size={20}/> Budgets & Goals</div>
+
+            <div     
+              className={`cursor-pointer flex items-center gap-3 ${activeTab === 'Reports' ? 'text-blue-600 font-bold' : 'text-gray-600'}`} 
+              onClick={() => setActiveTab('Reports')}
+            >
+              <Wallet size={20} />
+              Income & Expese
+            </div>
+
+            <div     
+              className={`cursor-pointer flex items-center gap-3 ${activeTab === 'Reports' ? 'text-blue-600 font-bold' : 'text-gray-600'}`} 
+              onClick={() => setActiveTab('Reports')}
+            >
+              <Target size={20} />
+              Budgets & Goals
+            </div>
 
             <div     
               className={`cursor-pointer flex items-center gap-3 ${activeTab === 'loanManager' ? 'text-blue-600 font-bold' : 'text-gray-600'}`} 
@@ -260,18 +274,15 @@ return (
               Loan Managers
             </div>
 
-            <div className="flex items-center gap-3 text-gray-600"><TrendingUp size={20}/> Investments</div>
-            <div className="flex items-center gap-3 text-gray-600"><FileText size={20}/> Reports</div>
-            <div className="flex items-center gap-3 text-gray-600"><Clock size={20}/> History</div>
-        
+            <div     
+              className={`cursor-pointer flex items-center gap-3 ${activeTab === 'Reports' ? 'text-blue-600 font-bold' : 'text-gray-600'}`} 
+              onClick={() => setActiveTab('Reports')}
+            >
+              <FileText size={20} />
+              Reports
+            </div>
+
           </nav>
-
-          <button className="w-full bg-blue-600 text-white rounded-lg py-2 mt-6 flex items-center justify-center gap-2" onClick={handleDownloadBackup}>
-            डेटा बैकअप (JSON)
-          </button>
-
-
-
 
           </div>
 
