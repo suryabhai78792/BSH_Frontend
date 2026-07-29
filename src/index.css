@@ -1,1 +1,9 @@
 @import "tailwindcss";
+/* पाई चार्ट या किसी भी SVG और उसके पाथ पर क्लिक करने पर आने वाला काला बॉर्डर/रेक्टेंगल पूरी तरह बंद करने के लिए */
+svg, svg *, canvas, path {
+  outline: none !important;
+}
+
+*:focus {
+  outline: none !important;
+}
