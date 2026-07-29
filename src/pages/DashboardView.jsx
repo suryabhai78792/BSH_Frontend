@@ -39,7 +39,8 @@ const { tableData: convertedTableData } = convertDataByMode(data, viewMode, 'inc
   const activeChartInstance = useRef(null);
   const chartLoopInterval = useRef(null);
   const [isLoading, setIsLoading] = useState(true); // शुरू में लोडिंग दिखाएं
-
+  const scrollRef = useRef(null);
+  const [activeIndex, setActiveIndex] = useState(0);
 
   const [income, setIncome] = useState("2,84,345");
   const [expense, setExpense] = useState("40,234");
@@ -282,6 +283,16 @@ const { tableData: convertedTableData } = convertDataByMode(data, viewMode, 'inc
         }); // यहाँ चार्ट का कोड खत्म हुआ.
   }
   
+    // यह फंक्शन पता लगाता है कि अभी कौन सा कार्ड सेंटर में है
+  const handleScroll = () => {
+    if (scrollRef.current) {
+      const scrollLeft = scrollRef.current.scrollLeft;
+      const cardWidth = scrollRef.current.offsetWidth;
+      // इंडेक्स कैलकुलेट करना
+      const index = Math.round(scrollLeft / cardWidth);
+      setActiveIndex(index);
+    }
+  };
 
   return (
    <div >
@@ -310,7 +321,58 @@ const { tableData: convertedTableData } = convertDataByMode(data, viewMode, 'inc
           <StatsCard income={income} expense={expense} budget={budget} savings={savings} loan={loan} />
         
         
-        
+        {/* पेरेंट कंटेनर (जहाँ स्क्रॉल इनेबल होगा) */}
+        <div className="flex flex-col gap-2">
+        <div 
+        ref={scrollRef}
+        onScroll={handleScroll}
+        className="flex -space-x-[45%] overflow-x-auto scrollbar-none px-4 py-2 w-full snap-x snap-mandatory">
+          
+          {/* कार्ड 1 */}
+          <div className="min-w-[123%] flex-shrink-0 snap-center snap-always origin-left transform scale-[0.8]">
+
+            {/* पाई चार्ट भाग */}
+            <PieChartCard 
+              title="लोन का वर्गीकरण" 
+              subtitle="(Category-wise Breakdown of Loans)" 
+              data={loanData}                    
+              showPercentage={true}  
+              isDonut={true}  
+            />   
+
+
+          </div>
+
+          {/* कार्ड 2 */}
+          <div className="min-w-[123%]  flex-shrink-0 snap-center snap-always origin-right transform scale-[0.8]">
+            <PieChartCard 
+              title="मंथली खर्च का वर्गीकरण" 
+              subtitle="(Monthly Expense Category-wise Breakdown)" 
+              data={pieData}                    
+              showPercentage={false}  
+              isDonut={false}  
+            /> 
+
+
+          </div>
+
+          {/* 2. केवल 2 डॉट्स (Indicators) वाला हिस्सा */}
+          <div className="flex justify-center items-center gap-1.5 my-1">
+            {[0, 1].map((index) => (
+              <div 
+                key={index}
+                className={`transition-all duration-300 rounded-full ${
+                  activeIndex === index ? 'bg-blue-600 w-4 h-1.5' : 'bg-gray-300 w-1.5 h-1.5'
+                }`}
+              />
+            ))}
+          </div>
+          </div>
+        </div>
+
+
+
+
         
         
         

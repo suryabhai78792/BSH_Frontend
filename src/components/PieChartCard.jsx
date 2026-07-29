@@ -23,7 +23,7 @@ export default function PieChartCard({ title, subtitle, data, showPercentage = t
     <div className="bg-white p-6 rounded-xl border border-gray-300">
       <h3 className="font-bold mb-2 flex flex-col">
         <span className="text-gray-900 text-base">{title}</span>
-        <span className="text-gray-500 text-sm font-normal">{subtitle}{showPercentage  ? "True" : "Falsh"}</span>
+        <span className="text-gray-500 text-sm font-normal">{subtitle}</span>
       </h3>
       
       <ResponsiveContainer width="100%" height={200} key={pieKey}>

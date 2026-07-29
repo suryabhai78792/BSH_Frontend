@@ -109,7 +109,7 @@ return (
 
 
           {/* मोबाइल पोर्ट्रेट का मुख्य कंटेंट यहाँ दिखेगा */}
-          <main className="pt-4 pb-8 px-0">
+          <main className="pt-4 pb-12 px-0">
             {activeTab === 'dashboard' && <DashboardView data={databaseData} viewMode={viewMode} />}
             {activeTab === 'transactions' && <TransactionsView data={databaseData} />}
             {activeTab === 'loanManager' && <LoanManager />}
