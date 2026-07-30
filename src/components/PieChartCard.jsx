@@ -88,17 +88,21 @@ export default function PieChartCard({ title, subtitle, data, showPercentage = t
             align="right" 
             verticalAlign="middle" 
             iconType="circle"
-            formatter={(value, entry) => {
+            formatter={(value, entry, index) => {
               const { payload } = entry;
               if (!payload || payload.value === undefined) return null;
+              const isSelected = activeIndex === index;
               return (
-                <span className="text-sm text-gray-700 font-medium inline-flex justify-between w-30 pr-4">
+                <span className={`text-sm text-gray-700 font-medium inline-flex justify-between w-30 pr-4 ${
+                    isSelected ? 'text-blue-600 font-bold' : 'text-700'
+                  }`}>
                   <span>{payload.name}</span>
                   <span className="font-semibold">₹{payload.value.toLocaleString()}</span>
                 </span>
               );
             }}
           />
+
         </PieChart>
       </ResponsiveContainer>
   

@@ -198,7 +198,7 @@ return (
         <div className="flex flex-1 overflow-hidden">
           
           {/* साइडबार */}
-  <div className="w-64 bg-white border-r border-gray-300 p-6 flex-shrink-0 h-full">
+      <div className="w-64 bg-white border-r border-gray-300 p-6 flex-shrink-0 h-full">
 
             {/* ... आपका साइडबार कोड यहाँ रहेगा ... */}
 
@@ -251,16 +251,16 @@ return (
             </div>
 
             <div     
-              className={`cursor-pointer flex items-center gap-3 ${activeTab === 'Reports' ? 'text-blue-600 font-bold' : 'text-gray-600'}`} 
-              onClick={() => setActiveTab('Reports')}
+              className={`cursor-pointer flex items-center gap-3 ${activeTab === 'incomeExpese' ? 'text-blue-600 font-bold' : 'text-gray-600'}`} 
+              onClick={() => setActiveTab('incomeExpese')}
             >
               <Wallet size={20} />
               Income & Expese
             </div>
 
             <div     
-              className={`cursor-pointer flex items-center gap-3 ${activeTab === 'Reports' ? 'text-blue-600 font-bold' : 'text-gray-600'}`} 
-              onClick={() => setActiveTab('Reports')}
+              className={`cursor-pointer flex items-center gap-3 ${activeTab === 'budgetsGoals' ? 'text-blue-600 font-bold' : 'text-gray-600'}`} 
+              onClick={() => setActiveTab('budgetsGoals')}
             >
               <Target size={20} />
               Budgets & Goals
