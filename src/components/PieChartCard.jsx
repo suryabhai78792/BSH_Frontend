@@ -18,8 +18,8 @@ export default function PieChartCard({ title, subtitle, data, showPercentage = t
     return () => clearInterval(interval);
   }, []);
 
-  const onPieClick = (_, index) => {
-      setActiveIndex(activeIndex === index ? null : index);
+  const onPieClick = (entry, index) => {
+      setActiveIndex(prevIndex => (prevIndex === index ? null : index));
     };
 
   const selectedItem = activeIndex !== null && data[activeIndex] ? data[activeIndex] : null;
@@ -82,22 +82,28 @@ export default function PieChartCard({ title, subtitle, data, showPercentage = t
             />
           </Pie>
 
-          
           <Legend 
             layout="vertical" 
             align="right" 
             verticalAlign="middle" 
             iconType="circle"
+            onClick={(event) => {
+              if (event && event.index !== undefined) {
+                setActiveIndex(prev => (prev === event.index ? null : event.index));
+              }
+            }}
             formatter={(value, entry, index) => {
               const { payload } = entry;
               if (!payload || payload.value === undefined) return null;
               const isSelected = activeIndex === index;
               return (
-                <span className={`text-sm text-gray-700 font-medium inline-flex justify-between w-30 pr-4 ${
-                    isSelected ? 'text-blue-600 font-bold' : 'text-700'
-                  }`}>
+                <span 
+                  className={`text-sm  inline-flex justify-between w-30 pr-4 ${
+                    isSelected ? 'text-blue-600 font-bold' : 'text-gray-700 font-medium'
+                  }`}
+                >
                   <span>{payload.name}</span>
-                  <span className="font-semibold">₹{payload.value.toLocaleString()}</span>
+                  <span >₹{payload.value.toLocaleString()}</span>
                 </span>
               );
             }}
