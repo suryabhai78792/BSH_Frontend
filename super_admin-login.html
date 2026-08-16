@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>डायनेमिक लॉगिन & सुपर एडमिन डैशबोर्ड</title>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+            background: #f4f7f6;
+        }
+
+        .box {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            margin-top: 20px;
+            box-sizing: border-box;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        th {
+            background: #f2f2f2;
+        }
+
+        .dot-green {
+            height: 10px;
+            width: 10px;
+            background-color: #28a745;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+        }
+
+        .dot-black {
+            height: 10px;
+            width: 10px;
+            background-color: #6c757d;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+        }
+
+        /* लॉगिन फॉर्म की स्टाइल */
+        .login-container {
+            max-width: 400px;
+            margin: 80px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .login-container input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .login-container button {
+            width: 100%;
+            padding: 10px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .login-container button:hover {
+            background: #0056b3;
+        }
+
+        /* क्लाइंट सक्सेस स्क्रीन की स्टाइल */
+        .success-container {
+            max-width: 500px;
+            margin: 100px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- लॉगिन पेज में सबसे ऊपर बटन -->
+    <div id="login-header-btn" style="text-align: right; margin-bottom: 20px;">
+        <button onclick="window.location.href='/routes/client_admin/client_admin-login.html'"
+            style="background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
+            👥 Client Login
+        </button>
+    </div>
+
+    <!-- 🔐 लॉगिन स्क्रीन (शुरुआत में दिखेगी) -->
+    <div id="login-section" class="login-container">
+        <h2>🔑 यूजर लॉगिन</h2>
+        <form id="login-form" onsubmit="handleLogin(event)">
+            <label>यूजर आईडी (User ID):</label>
+            <input type="text" id="user_id" required placeholder="यूजर आईडी डालें">
+
+            <label>पासवर्ड (Password):</label>
+            <input type="password" id="password" required placeholder="पासवर्ड डालें">
+
+            <button type="submit">लॉगिन करें</button>
+        </form>
+    </div>
+
+    <!-- 👑 सुपर एडमिन डैशबोर्ड (सिर्फ सुपर एडमिन के लिए) -->
+    <div id="super-admin-dashboard" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h1>👑 सुपर एडमिन लाइव डैशबोर्ड</h1>
+            <button onclick="logout()"
+                style="background: #dc3545; color: white; padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer;">लॉग
+                आउट (Logout)</button>
+        </div>
+
+        <div class="box">
+            <h2 style="color: #007bff;">📊 क्लाइंट यूजर्स की एक्टिविटी हिस्ट्री</h2>
+            <button onclick="clearAllHistory()"
+                style="background-color: #dc3545; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; margin-bottom: 10px;">
+                🗑️ सारी हिस्ट्री साफ़ करें (Clear History)
+            </button>
+            <table>
+                <thead>
+                    <tr>
+                        <th>S.N</th>
+                        <th>Date</th>
+                        <th>User Name</th>
+                        <th>address</th>
+                        <th>mobile</th>
+                        <th>Product</th>
+                        <th>Online Time</th>
+                        <th>Offline Time</th>
+                        <th>Duration</th>
+                    </tr>
+                </thead>
+                <tbody id="history-table-body">
+                    <!-- डेटा यहाँ डायनेमिक लोड होगा -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ✅ क्लाइंट एडमिन सक्सेस स्क्रीन (सिर्फ क्लाइंट के लिए) -->
+    <div id="client-success-screen" style="display: none;" class="success-container">
+        <h1 style="color: #28a745;">🎉 लॉगिन सफल!</h1>
+        <p id="welcome-msg" style="font-size: 18px; color: #333;"></p>
+        <p style="color: #666;">आप सफलतापूर्वक अपने अकाउंट में लॉग इन कर चुके हैं।</p>
+        <button onclick="logout()"
+            style="background: #dc3545; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin-top: 20px;">लॉग
+            आउट (Logout)</button>
+    </div>
+
+    <script>
+        const BASE_URL = "http://localhost:5000"; // अपने सर्वर का URL यहाँ रखें
+        let historyDataList = [];
+
+        // पेज लोड होने पर चेक करें कि क्या यूजर पहले से ब्राउज़र में लॉग इन है
+        window.onload = function () {
+            const token = localStorage.getItem("token");
+            const role = localStorage.getItem("role");
+
+            if (token && role) {
+                redirectBasedOnRole(role);
+            }
+        };
+
+        // आपके मौजूदा लॉगिन API को कॉल करने का फंक्शन
+        async function handleLogin(e) {
+            e.preventDefault();
+            const user_id = document.getElementById('user_id').value;
+            const password = document.getElementById('password').value;
+
+            // यहाँ प्रोडक्ट आईडी को फिक्स कर दिया गया है (अब यूजर को नहीं डालना पड़ेगा)
+            const product_id = "Business_Software_Hub";
+            try {
+                // आपके बनाए हुए लॉगिन API का राउट यहाँ सेट करें (जैसे: /api/login)
+                const response = await fetch(`${BASE_URL}/api/client-admin/api/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id, password, product_id })
+                });
+                const result = await response.json();
+
+                if (response.ok) {
+                    // आपके API रिस्पॉन्स से टोकन, रोल और नाम को सेव करें
+                    localStorage.setItem("token", result.token);
+                    localStorage.setItem("role", result.role); // 'super_admin' या 'client_admin'
+                    localStorage.setItem("name", result.name || user_id);
+
+                    // रोल के आधार पर सही स्क्रीन दिखाएं
+                    redirectBasedOnRole(result.role);
+                } else {
+                    alert(result.message || "लॉगिन विफल रहा!");
+                }
+            } catch (err) {
+                console.error("लॉगिन एरर:", err);
+                alert("सर्वर से कनेक्ट करने में समस्या आ रही है।");
+            }
+        }
+
+        // रोल के हिसाब से स्क्रीन डिसाइड करने का फंक्शन
+        function redirectBasedOnRole(role) {
+            document.getElementById('login-section').style.display = 'none';
+
+            if (role === 'super_admin') {
+                // अगर सुपर एडमिन है तो लाइव ट्रैकिंग डैशबोर्ड दिखाएं
+                document.getElementById('super-admin-dashboard').style.display = 'block';
+                initSuperAdminDashboard();
+            } else {
+                // अगर क्लाइंट एडमिन है तो सिर्फ सफलता पूर्वक लॉगिन का मैसेज दिखाएं
+                document.getElementById('client-success-screen').style.display = 'block';
+                const name = localStorage.getItem("name") || "यूजर";
+                document.getElementById('welcome-msg').innerText = `स्वागत है, ${name}!`;
+            }
+        }
+
+        function logout() {
+            localStorage.clear();
+            location.reload();
+        }
+
+        // सुपर एडमिन के लिए सॉकेट और डेटा लोडिंग सेटअप
+        function initSuperAdminDashboard() {
+            const socket = io(BASE_URL, {
+                query: { userId: "super_admin_dashboard", role: "super_admin" }
+            });
+
+            socket.on('refreshTable', () => {
+                loadUserHistory();
+            });
+
+            loadUserHistory();
+        }
+
+        // केवल क्लाइंट्स की हिस्ट्री फेच करने के लिए
+        async function loadUserHistory() {
+            try {
+                const token = localStorage.getItem("token");
+                const response = await fetch(`${BASE_URL}/api/super-admin/api/user-history`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const histories = await response.json();
+
+                // सुपर एडमिन खुद को सूची में न देखे, इसलिए उसे फ़िल्टर कर दें
+                historyDataList = histories.filter(item => item.role !== 'super_admin');
+                renderHistoryTable();
+            } catch (err) {
+                console.error("हिस्ट्री लोड करने में एरर:", err);
+            }
+        }
+
+        function renderHistoryTable() {
+            const tbody = document.getElementById('history-table-body');
+            tbody.innerHTML = "";
+
+            if (!historyDataList || historyDataList.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;">कोई क्लाइंट हिस्ट्री उपलब्ध नहीं है</td></tr>`;
+                return;
+            }
+
+            historyDataList.forEach((item, index) => {
+                const onlineDateObj = new Date(item.onlineDateTime);
+                const onlineDateFormatted = onlineDateObj.toLocaleDateString();
+                const onlineTimeFormatted = onlineDateObj.toLocaleTimeString();
+
+                let offlineFormatted = "";
+                let durationText = "";
+                let dotClass = "dot-black";
+
+                if (!item.offlineDateTime) {
+                    dotClass = "dot-green";
+                    offlineFormatted = `<span style="color: green; font-weight: bold;">🟢 अभी ऑनलाइन है</span>`;
+
+                    const diffMs = Date.now() - onlineDateObj.getTime();
+                    const totalSec = Math.floor(diffMs / 1000);
+                    durationText = `<span id="duration-${index}" style="color: green; font-weight: bold;">${formatDuration(totalSec)}</span>`;
+                } else {
+                    dotClass = "dot-black";
+                    const offlineDateObj = new Date(item.offlineDateTime);
+                    const isSameDay = onlineDateObj.toDateString() === offlineDateObj.toDateString();
+                    offlineFormatted = isSameDay ? offlineDateObj.toLocaleTimeString() : offlineDateObj.toLocaleString();
+
+                    const diffMs = offlineDateObj - onlineDateObj;
+                    const totalSec = Math.floor(diffMs / 1000);
+                    durationText = `<b>${formatDuration(totalSec)}</b>`;
+                }
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${onlineDateFormatted}</td>
+                        <td><span class="${dotClass}"></span>${item.name || item.user_id}</td>
+                        <td>${item.address || 'उपलब्ध नहीं'}</td>    <!-- एड्रेस दिखाएं -->
+                        <td>${item.mobile || 'उपलब्ध नहीं'}</td>  <!-- मोबाइल दिखाएं -->
+                        <td>${item.productId}</td>
+                        <td>${onlineTimeFormatted}</td>
+                        <td>${offlineFormatted}</td>
+                        <td>${durationText}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        function formatDuration(totalSec) {
+            if (totalSec < 0) totalSec = 0;
+            const hrs = Math.floor((totalSec % (3600 * 24)) / 3600);
+            const mins = Math.floor((totalSec % 3600) / 60);
+            const secs = totalSec % 60;
+            return `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        }
+
+        // लाइव काउंटर हर 1 सेकंड में अपडेट होगा
+        setInterval(() => {
+            historyDataList.forEach((item, index) => {
+                if (!item.offlineDateTime) {
+                    const spanElement = document.getElementById(`duration-${index}`);
+                    if (spanElement) {
+                        const onlineTime = new Date(item.onlineDateTime).getTime();
+                        const currentSec = Math.floor((Date.now() - onlineTime) / 1000);
+                        spanElement.innerHTML = `${formatDuration(currentSec)}`;
+                    }
+                }
+            });
+        }, 1000);
+
+        async function clearAllHistory() {
+            if (confirm("क्या आप वाकई सारी पुरानी हिस्ट्री डिलीट करना चाहते हैं?")) {
+                try {
+                    const token = localStorage.getItem("token");
+                    const response = await fetch(`${BASE_URL}/api/super-admin/api/clear-history`, {
+                        method: 'DELETE',
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    if (response.ok) {
+                        alert("हिस्ट्री साफ़ कर दी गई है!");
+                        loadUserHistory();
+                    }
+                } catch (err) {
+                    console.error("क्लियर करने में एरर:", err);
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>
