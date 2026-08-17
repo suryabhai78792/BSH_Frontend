@@ -37,12 +37,13 @@ export default function ClientAdminLogin({ onSwitchToSuperAdmin }) {
 
       if (response.ok) {
         localStorage.setItem('token', data.token);
+        localStorage.setItem('role', 'client_admin');
         alert("लॉगिन सफल!");
         
         // 🔍 यहाँ चेक करें कि कौन सा प्रोडक्ट चुना गया है
         if (selectedProduct === 'Finance_Tracker') {
           // अगर फाइनेंस ऐप है, तो सीधे आपके इस रेंडर वाले लाइव एड्रेस पर भेज देगा
-          window.location.href = "https://surya-income-deshboard.onrender.com";
+          window.location.href = `https://surya-income-deshboard.onrender.com?token=${data.token}&role=client_admin`;
         } else {
           // अगर कमेटी ऐप है, तो पुराना वाला सिंपल डैशबोर्ड ही दिखेगा
           setIsLoggedIn(true);
