@@ -35,10 +35,10 @@ export default function ClientAdminLogin({ onSwitchToSuperAdmin }) {
 
       const data = await response.json();
 
-      if (response.ok) {
+      if (response.ok) {        
         localStorage.setItem('token', data.token);
         localStorage.setItem('role', 'client_admin');
-        alert("लॉगिन सफल!");
+        alert("Login Success! Token value: " + data.token);
         
         // 🔍 यहाँ चेक करें कि कौन सा प्रोडक्ट चुना गया है
         if (selectedProduct === 'Finance_Tracker') {
