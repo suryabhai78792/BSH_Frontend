@@ -1,6 +1,6 @@
 // src/api.js
 
-export const API_BASE_URL = "https://bsh-backend.onrender.com"; // आपका रेंडर लाइव लिंक
+export const API_BASE_URL = import.meta.env.VITE_API_URL; // आपका रेंडर लाइव लिंक
 
 // एक कॉमन फेच फंक्शन ताकि बार-बार कोड न लिखना पड़े
 export async function callApi(endpoint, method = "GET", data = null, token = null) {
