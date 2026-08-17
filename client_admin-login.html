@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>क्लाइंट एडमिन - प्रोडक्ट आधारित लॉगिन</title>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+            background: #f4f7f6;
+        }
+
+        .box {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 380px;
+            margin: 40px auto;
+            box-sizing: border-box;
+        }
+
+        input {
+            display: block;
+            width: 100%;
+            margin-bottom: 12px;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        /* प्रोडक्ट सेलेक्शन बटन स्टाइल */
+        .product-btn {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .product-btn.active {
+            background: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+
+        .product-btn:hover {
+            opacity: 0.9;
+        }
+
+        /* लॉगिन बटन स्टाइल */
+        .login-submit-btn {
+            width: 100%;
+            padding: 12px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .login-submit-btn:hover {
+            background: #218838;
+        }
+
+        #login-form-container {
+            display: none;
+            margin-top: 15px;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+        }
+
+        #dashboard {
+            display: none;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: 40px auto;
+        }
+
+        .password-container {
+            position: relative;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .password-container input {
+            margin-bottom: 0;
+            padding-right: 40px;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 0;
+            color: #555;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- लॉगिन पेज में सबसे ऊपर बटन -->
+    <div id="login-header-btn" style="text-align: right; margin-bottom: 20px;">
+        <button onclick="window.location.href='/routes/super_admin/utils/super_admin-login.html'"
+            style="background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
+            👥 Super-Admin Login
+        </button>
+    </div>
+
+    <!-- 1. प्रोडक्ट सिलेक्शन और लॉगिन बॉक्स -->
+    <div id="login-box" class="box">
+        <h3 style="text-align: center; color: #333; margin-top: 0;">क्लाइंट एडमिन लॉगिन</h3>
+        <p style="font-size: 14px; color: #666; text-align: center;">पहले अपना प्रोडक्ट चुनें:</p>
+
+        <!-- प्रोडक्ट चुनने वाले बटन -->
+        <button type="button" class="product-btn" id="btn-Finance_Tracker" onclick="selectProduct('Finance_Tracker')">💰 फाइनेंस ऐप (Finance Tracker)</button>
+        <button type="button" class="product-btn" id="btn-Committee_Management" onclick="selectProduct('Committee_Management')">🤝 कमेटी ऐप (Committee Management)</button>
+        <!-- आप चाहें तो नीचे और भी प्रोडक्ट्स के बटन जोड़ सकते हैं -->
+
+        <!-- प्रोडक्ट चुनने के बाद दिखने वाला लॉगिन फॉर्म -->
+        <div id="login-form-container">
+            <h4 id="selected-product-title" style="color: #007bff; margin-bottom: 10px; text-align: center;"></h4>
+            
+            <input type="email" id="email" placeholder="ईमेल दर्ज करें (जैसे: surya@spreeti.com)" value="surya@spreeti.com">
+            
+            <div class="password-container">
+                <input type="password" id="password" placeholder="पासवर्ड दर्ज करें" value="Surya%12345">
+                <button type="button" class="toggle-password" id="toggleBtn" onclick="togglePasswordVisibility()">👁️</button>
+            </div>
+
+            <button type="button" class="login-submit-btn" onclick="loginAndConnect()">लॉगिन करके सॉकेट जोड़ें</button>
+        </div>
+    </div>
+
+    <!-- 2. डैशबोर्ड (लॉगिन के बाद दिखेगा) -->
+    <div id="dashboard">
+        <h2 style="color: green; margin-top: 0;">✔ लॉगिन सफल! सॉकेट कनेक्ट हो गया है।</h2>
+        <h3 id="current-app-display" style="color: #555;"></h3>
+        <h3>ऑनलाइन यूजर काउंट: <span id="count">0</span></h3>
+        <h3>ऑनलाइन यूजर्स की लाइव लिस्ट:</h3>
+        <ul id="user-list" style="line-height: 1.6;"></ul>
+    </div>
+
+    <script>
+        let selectedProduct = ""; // यहाँ यूजर द्वारा चुना गया प्रोडक्ट स्टोर होगा
+
+        // प्रोडक्ट चुनने का फंक्शन
+        function selectProduct(productId) {
+            selectedProduct = productId;
+
+            // सभी प्रोडक्ट बटनों से 'active' क्लास हटाएँ और चुने गए बटन पर जोड़ें
+            document.querySelectorAll('.product-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`btn-${productId}`).classList.add('active');
+
+            // लॉगिन फॉर्म दिखाएं
+            document.getElementById('login-form-container').style.display = 'block';
+
+            // हेडिंग में प्रोडक्ट का नाम दिखाएं
+            const displayName = productId === 'Finance_Tracker' ? 'Finance Tracker ऐप' : 'Committee Management ऐप';
+            document.getElementById('selected-product-title').innerText = `selected: ${displayName}`;
+        }
+
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('password');
+            const toggleBtn = document.getElementById('toggleBtn');
+
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                toggleBtn.innerText = "👁️‍🗨️";
+            } else {
+                passwordInput.type = "password";
+                toggleBtn.innerText = "👁️";
+            }
+        }
+
+        async function loginAndConnect() {
+            // वैलिडेट करें कि क्या यूजर ने प्रोडक्ट चुना है या नहीं
+            if (!selectedProduct) {
+                alert("कृपया पहले ऊपर दिए गए बटनों में से कोई एक प्रोडक्ट चुनें!");
+                return;
+            }
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                // 1. आपके असली लॉगिन API को रिक्वेस्ट भेजें
+                const response = await fetch('http://localhost:5000/api/client-admin/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        user_id: email,
+                        password: password,
+                        product_id: selectedProduct // चुने गए प्रोडक्ट की आईडी जाएगी
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    localStorage.setItem('token', data.token);
+                    alert("लॉगिन सफल!");
+                    
+                    // लॉगिन फॉर्म छुपाएं और डैशबोर्ड दिखाएं
+                    document.getElementById('login-box').style.display = 'none';
+                    document.getElementById('dashboard').style.display = 'block';
+                    document.getElementById('current-app-display').innerText = `सक्रिय ऐप: ${selectedProduct}`;
+
+                    const currentToken = (typeof data !== 'undefined' && data.token) ? data.token : localStorage.getItem('token');
+                    
+                    // 2. चुने गए प्रोडक्ट आईडी के साथ Socket.io से कनेक्ट करें
+                    const socket = io("http://localhost:5000", {
+                        query: {
+                            token: currentToken,
+                            productId: selectedProduct
+                        }
+                    });
+
+                    // 1. सॉकेट कनेक्ट होने के बाद हार्टबीट इंटरवल चलाएं
+                    setInterval(() => {
+                        if (socket && socket.connected) {
+                            socket.emit('client_heartbeat');
+                            console.log("पिंग भेजा गया...");
+                        }
+                    }, 60000); // 1 मिनट
+
+                    // 3. लाइव डेटा को स्क्रीन पर दिखाएं
+                    socket.on('liveUsersUpdate', (socketData) => {
+                        document.getElementById('count').innerText = socketData.count;
+                        const listElement = document.getElementById('user-list');
+                        listElement.innerHTML = "";
+
+                        socketData.users.forEach(user => {
+                            const li = document.createElement('li');
+                            li.innerText = `यूजर: ${user.name} | सॉफ्टवेयर: ${user.productId}`;
+                            listElement.appendChild(li);
+                        });
+                    });
+
+                } else {
+                    alert("लॉगिन फेल: " + data.message);
+                }
+            } catch (err) {
+                console.error("एरर:", err);
+                alert("सर्वर से कनेक्ट करने में समस्या हुई!");
+            }
+        }
+    </script>
+</body>
+
+</html>
