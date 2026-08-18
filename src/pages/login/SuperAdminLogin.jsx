@@ -4,8 +4,8 @@ import { API_BASE_URL } from '../../api'; // (ध्यान रखें क�
 
 
 export default function SuperAdminLogin({ onSwitchToClient }) {
-  const [userId, setUserId] = useState('');
-  const [password, setPassword] = useState('');
+  const [userId, setUserId] = useState("surya@spreeti.com");
+  const [password, setPassword] = useState("Surya%12345");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [historyDataList, setHistoryDataList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);

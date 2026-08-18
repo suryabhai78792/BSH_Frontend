@@ -6,7 +6,7 @@ import { API_BASE_URL } from '../../api'; // (ध्यान रखें क�
 
 export default function ClientAdminLogin({ onSwitchToSuperAdmin }) {
   const [selectedProduct, setSelectedProduct] = useState("");
-  const [email, setEmail] = useState("surya@spreeti.com");
+  const [userId, setUserId] = useState("surya@spreeti.com");
   const [password, setPassword] = useState("Surya%12345");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -27,7 +27,7 @@ export default function ClientAdminLogin({ onSwitchToSuperAdmin }) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          user_id: email,
+          user_id: userId,
           password: password,
           product_id: selectedProduct
         })
@@ -117,10 +117,10 @@ export default function ClientAdminLogin({ onSwitchToSuperAdmin }) {
                 </h4>
                 <div>
                   <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="ईमेल दर्ज करें"
+                    type="text"
+                    value={userId}
+                    onChange={(e) => setUserId(e.target.value)}
+                    placeholder="यूजर आईडी दर्ज करें"
                     className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
