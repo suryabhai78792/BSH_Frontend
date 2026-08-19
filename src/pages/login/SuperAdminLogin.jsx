@@ -11,6 +11,43 @@ function formatDuration(totalSec) {
   return `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
 }
 
+// यह छोटा कंपोनेंट सिर्फ अपने अंदर के समय को हर 1 सेकंड में अपडेट करेगा, बाकी पूरा पेज शांत रहेगा
+function DurationTimer({ onlineDateTime, offlineDateTime }) {
+  const [durationText, setDurationText] = useState("");
+
+  useEffect(() => {
+    // कैलकुलेट करने का फंक्शन
+    const updateDuration = () => {
+      const onlineDateObj = new Date(onlineDateTime);
+      let totalSec = 0;
+
+      if (!offlineDateTime) {
+        const diffMs = Date.now() - onlineDateObj.getTime();
+        totalSec = Math.floor(diffMs / 1000);
+      } else {
+        const offlineDateObj = new Date(offlineDateTime);
+        const diffMs = offlineDateObj - onlineDateObj;
+        totalSec = Math.floor(diffMs / 1000);
+      }
+      setDurationText(formatDuration(totalSec));
+    };
+
+    updateDuration(); // पहली बार तुरंत चलाएं
+
+    // अगर यूजर अभी भी ऑनलाइन है, तभी हर 1 सेकंड में इंटरवल चलाएं
+    let timer = null;
+    if (!offlineDateTime) {
+      timer = setInterval(updateDuration, 1000);
+    }
+
+    return () => {
+      if (timer) clearInterval(timer);
+    };
+  }, [onlineDateTime, offlineDateTime]);
+
+  return <span className="font-mono font-semibold">{durationText}</span>;
+}
+
 export default function SuperAdminLogin({ onSwitchToClient }) {
   const [userId, setUserId] = useState("surya@spreeti.com");
   const [password, setPassword] = useState("Surya%12345");
@@ -229,7 +266,12 @@ export default function SuperAdminLogin({ onSwitchToClient }) {
                           )}
                         </td>
                         {/* 🟢 यह रहा सही ड्यूरेशन और समय दिखाने वाला कोड */}
-                        <td className="border p-2 font-mono font-semibold">{durationText}</td>
+                        <td className="border p-2">
+                          <DurationTimer
+                            onlineDateTime={item.onlineDateTime}
+                            offlineDateTime={item.offlineDateTime}
+                          />
+                        </td>
                       </tr>
                     );
                   })}
