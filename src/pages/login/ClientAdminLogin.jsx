@@ -11,16 +11,21 @@ export default function ClientAdminLogin({ onSwitchToSuperAdmin }) {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [liveData, setLiveData] = useState({ count: 0, users: [] });
+  const [isLoading, setIsLoading] = useState(false);
 
   function selectProduct(productId) {
     setSelectedProduct(productId);
   }
 
-  async function loginAndConnect() {
+  async function loginAndConnect(e) {
+    e.preventDefault();
+
     if (!selectedProduct) {
       alert("कृपया पहले ऊपर दिए गए बटनों में से कोई एक प्रोडक्ट चुनें!");
       return;
     }
+
+    setIsLoading(true);
 
     try {
       const response = await fetch(`${API_BASE_URL}/api/client-admin/api/login`, {
@@ -35,11 +40,11 @@ export default function ClientAdminLogin({ onSwitchToSuperAdmin }) {
 
       const data = await response.json();
 
-      if (response.ok) {        
+      if (response.ok) {
         localStorage.setItem('token', data.token);
         localStorage.setItem('role', 'client_admin');
         alert("Login Success! Token value: " + data.token);
-        
+
         // 🔍 यहाँ चेक करें कि कौन सा प्रोडक्ट चुना गया है
         if (selectedProduct === 'Finance_Tracker') {
           // अगर फाइनेंस ऐप है, तो सीधे आपके इस रेंडर वाले लाइव एड्रेस पर भेज देगा
@@ -72,6 +77,8 @@ export default function ClientAdminLogin({ onSwitchToSuperAdmin }) {
     } catch (err) {
       console.error("एरर:", err);
       alert("सर्वर से कनेक्ट करने में समस्या हुई!");
+    } finally {
+      setIsLoading(false); // 👈 काम पूरा होने के बाद लोडिंग बंद कर दें (चाहे सक्सेस हो या फेल)
     }
   }
 
@@ -111,43 +118,45 @@ export default function ClientAdminLogin({ onSwitchToSuperAdmin }) {
             </div>
 
             {selectedProduct && (
-              <div className="border-t pt-4 space-y-4">
-                <h4 className="text-blue-600 font-semibold text-center">
-                  Selected: {selectedProduct === 'Finance_Tracker' ? 'Finance Tracker ऐप' : 'Committee Management ऐप'}
-                </h4>
-                <div>
-                  <input
-                    type="text"
-                    value={userId}
-                    onChange={(e) => setUserId(e.target.value)}
-                    placeholder="यूजर आईडी दर्ज करें"
-                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div className="relative">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="पासवर्ड दर्ज करें"
-                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10"
-                  />
+              <form onSubmit={loginAndConnect} className="border-t pt-4 space-y-4">
+                <div className="border-t pt-4 space-y-4">
+                  <h4 className="text-blue-600 font-semibold text-center">
+                    Selected: {selectedProduct === 'Finance_Tracker' ? 'Finance Tracker ऐप' : 'Committee Management ऐप'}
+                  </h4>
+                  <div>
+                    <input
+                      type="text"
+                      value={userId}
+                      onChange={(e) => setUserId(e.target.value)}
+                      placeholder="यूजर आईडी दर्ज करें"
+                      className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div className="relative">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="पासवर्ड दर्ज करें"
+                      className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600 text-sm"
+                    >
+                      {showPassword ? "👁️‍🗨️" : "👁️"}
+                    </button>
+                  </div>
                   <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600 text-sm"
+                    type="submit"
+                    disabled={isLoading}
+                    className="w-full bg-green-600 text-white py-3 rounded-md font-bold hover:bg-green-700 transition"
                   >
-                    {showPassword ? "👁️‍🗨️" : "👁️"}
+                    {isLoading ? 'लॉगिन हो रहा है...⏳' : 'लॉगिन करें'}
                   </button>
                 </div>
-                <button
-                  type="button"
-                  onClick={loginAndConnect}
-                  className="w-full bg-green-600 text-white py-3 rounded-md font-bold hover:bg-green-700 transition"
-                >
-                  लॉगिन करके सॉकेट जोड़ें
-                </button>
-              </div>
+              </form>
             )}
           </div>
         </div>
@@ -165,7 +174,8 @@ export default function ClientAdminLogin({ onSwitchToSuperAdmin }) {
             ))}
           </ul>
         </div>
-      )}
-    </div>
+      )
+      }
+    </div >
   );
 }
