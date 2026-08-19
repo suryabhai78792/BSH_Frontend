@@ -2,6 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { io } from 'socket.io-client';
 import { API_BASE_URL } from '../../api'; // (ध्यान रखें कि पाथ आपकी फाइल के हिसाब से सही हो)
 
+// ड्यूरेशन कैलकुलेट करने के लिए एक छोटा हेलपर फंक्शन
+function formatDuration(totalSec) {
+  if (totalSec < 0) totalSec = 0;
+  const hrs = Math.floor((totalSec % (3600 * 24)) / 3600);
+  const mins = Math.floor((totalSec % 3600) / 60);
+  const secs = totalSec % 60;
+  return `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+}
 
 export default function SuperAdminLogin({ onSwitchToClient }) {
   const [userId, setUserId] = useState("surya@spreeti.com");
@@ -48,7 +56,7 @@ export default function SuperAdminLogin({ onSwitchToClient }) {
     } catch (err) {
       console.error("लॉगिन एरर:", err);
       alert("सर्वर से कनेक्ट करने में समस्या आ रही है।");
-    }finally {
+    } finally {
       setIsLoading(false); // 👈 2. काम पूरा होने पर लोडिंग बंद (चाहे सक्सेस हो या एरर)
     }
   }
@@ -62,6 +70,8 @@ export default function SuperAdminLogin({ onSwitchToClient }) {
     });
     loadUserHistory();
   }
+
+
 
   async function loadUserHistory() {
     try {
@@ -185,20 +195,32 @@ export default function SuperAdminLogin({ onSwitchToClient }) {
                   </tr>
                 </thead>
                 <tbody className="text-sm">
-                  {historyDataList.length === 0 ? (
-                    <tr>
-                      <td colSpan="9" className="text-center p-4 text-gray-500">कोई क्लाइंट हिस्ट्री उपलब्ध नहीं है</td>
-                    </tr>
-                  ) : (
-                    historyDataList.map((item, index) => (
+                  {historyDataList.map((item, index) => {
+                    const onlineDateObj = new Date(item.onlineDateTime);
+                    let durationText = "";
+
+                    if (!item.offlineDateTime) {
+                      // अगर यूजर अभी ऑनलाइन है
+                      const diffMs = Date.now() - onlineDateObj.getTime();
+                      const totalSec = Math.floor(diffMs / 1000);
+                      durationText = formatDuration(totalSec);
+                    } else {
+                      // अगर यूजर ऑफलाइन हो चुका है
+                      const offlineDateObj = new Date(item.offlineDateTime);
+                      const diffMs = offlineDateObj - onlineDateObj;
+                      const totalSec = Math.floor(diffMs / 1000);
+                      durationText = formatDuration(totalSec);
+                    }
+
+                    return (
                       <tr key={index} className="hover:bg-gray-50">
                         <td className="border p-2">{index + 1}</td>
-                        <td className="border p-2">{new Date(item.onlineDateTime).toLocaleDateString()}</td>
+                        <td className="border p-2">{onlineDateObj.toLocaleDateString()}</td>
                         <td className="border p-2 font-medium">{item.name || item.user_id}</td>
                         <td className="border p-2">{item.address || 'उपलब्ध नहीं'}</td>
                         <td className="border p-2">{item.mobile || 'उपलब्ध नहीं'}</td>
                         <td className="border p-2">{item.productId}</td>
-                        <td className="border p-2">{new Date(item.onlineDateTime).toLocaleTimeString()}</td>
+                        <td className="border p-2">{onlineDateObj.toLocaleTimeString()}</td>
                         <td className="border p-2">
                           {!item.offlineDateTime ? (
                             <span className="text-green-600 font-bold">🟢 ऑनलाइन है</span>
@@ -206,10 +228,11 @@ export default function SuperAdminLogin({ onSwitchToClient }) {
                             new Date(item.offlineDateTime).toLocaleTimeString()
                           )}
                         </td>
-                        <td className="border p-2">सक्रिय</td>
+                        {/* 🟢 यह रहा सही ड्यूरेशन और समय दिखाने वाला कोड */}
+                        <td className="border p-2 font-mono font-semibold">{durationText}</td>
                       </tr>
-                    ))
-                  )}
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
@@ -219,3 +242,4 @@ export default function SuperAdminLogin({ onSwitchToClient }) {
     </div>
   );
 }
+
