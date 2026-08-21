@@ -19,7 +19,7 @@ export default function ClientAdminLogin({ onSwitchToSuperAdmin }) {
 
   async function loginAndConnect(e) {
     e.preventDefault();
-
+    setIsLoading(true);
     if (!selectedProduct) {
       alert("कृपया पहले ऊपर दिए गए बटनों में से कोई एक प्रोडक्ट चुनें!");
       return;

@@ -46,12 +46,12 @@ function App() {
     });
 
     socketRef.current.on('connect', () => {
-      console.log("🟢 सुपर एडमिन सॉकेट कनेक्ट हो गया! ID:", socketRef.current.id);
+     console.log(`⏱️ [${new Date().toLocaleTimeString()}] 🟢 सुपर एडमिन सॉकेट कनेक्ट हो गया!`);
     });
 
     // सॉकेट का रिफ्रेश लिसनर बैकग्राउंड में काम करता रहेगा
     socketRef.current.on('refreshTable', () => {
-      console.log("🔄 रिफ्रेश टेबल का सिग्नल मिला!");
+      console.log(`⏱️ [${new Date().toLocaleTimeString()}] 🔄 [सिग्नल मिला] 'refreshTable' इवेंट रिसीव हुआ, टेबल लोड हो रही है...`);
       loadUserHistory();
     });
 
