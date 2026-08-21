@@ -9,6 +9,7 @@ function App() {
   const [isAuth, setIsAuth] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [historyDataList, setHistoryDataList] = useState([]);
+  const [selectedProduct, setSelectedProduct] = useState('clients');
   const socketRef = useRef(null);
 
   // 🔄 एक मुख्य फंक्शन जो अंदर ही अंदर टोकन चेक, सॉकेट कनेक्ट और डेटा फेच करेगा
@@ -18,7 +19,11 @@ function App() {
 
     if (token) {
       setIsAuth(true);
+      // 1. तुरंत डेटा लोड करें और लोडिंग बंद करें ताकि यूआई तुरंत दिख जाए
+      loadUserHistory();
+      setIsLoading(false);
 
+      // 2. सॉकेट कनेक्शन को बैकग्राउंड में कनेक्ट होने दें
       // 3. पुराना सॉकेट बंद करके नया कनेक्ट करें
       if (socketRef.current) {
         socketRef.current.disconnect();
@@ -30,11 +35,10 @@ function App() {
 
       socketRef.current.on('connect', () => {
         console.log("🟢 सुपर एडमिन सॉकेट कनेक्ट हो गया! ID:", socketRef.current.id);
-        loadUserHistory();
-        setIsLoading(false);
+
       });
 
-      // यहीं पर 'refreshTable' लिसनर लगा दें
+      // सॉकेट का रिफ्रेश लिसनर बैकग्राउंड में काम करता रहेगा
       socketRef.current.on('refreshTable', () => {
         loadUserHistory();
       });
@@ -152,6 +156,30 @@ function App() {
           >
             🗑️ सारी हिस्ट्री साफ़ करें (Clear History)
           </button>
+
+          {/* 🔘 यहाँ दोनों बटन जोड़ें */}
+          <div style={{ marginBottom: '15px' }}>
+            <button
+              onClick={() => setSelectedProduct('clients')}
+              style={{
+                backgroundColor: selectedProduct === 'clients' ? '#007bff' : '#6c757d',
+                color: 'white', padding: '10px 15px', border: 'none', borderRadius: '5px', cursor: 'pointer'
+              }}
+            >
+              👥 क्लाइंट यूजर्स की हिस्ट्री
+            </button>
+
+            <button
+              onClick={() => setSelectedProduct('superAdmin')}
+              style={{
+                backgroundColor: selectedProduct === 'superAdmin' ? '#dc3545' : '#6c757d',
+                color: 'white', padding: '10px 15px', border: 'none', borderRadius: '5px', cursor: 'pointer', marginLeft: '10px'
+              }}
+            >
+              👑 सुपर एडमिन लॉगिन हिस्ट्री
+            </button>
+          </div>
+
           <table>
             <thead>
               <tr>
@@ -173,46 +201,57 @@ function App() {
                   <td colSpan="9" style={{ textAlign: 'center' }}>कोई क्लाइंट हिस्ट्री उपलब्ध नहीं है</td>
                 </tr>
               ) : (
-                historyDataList.previousMap ? null : historyDataList.map((item, index) => {
-                  const onlineDateObj = new Date(item.onlineDateTime);
-                  const onlineDateFormatted = onlineDateObj.toLocaleDateString();
-                  const onlineTimeFormatted = onlineDateObj.toLocaleTimeString();
+                historyDataList
 
-                  let offlineFormatted = "";
-                  let durationText = "";
-                  let dotClass = "dot-black";
+                  .filter(item => {
+                    // 🔍 यहीं पर चुने गए बटन के हिसाब से तुरंत फ़िल्टर कर देगा
+                    if (selectedProduct === 'clients') {
+                      return item.productId !== 'Super_Admin_Panel'; // क्लाइंट्स दिखाएं
+                    } else {
+                      return item.productId === 'Super_Admin_Panel'; // सुपर एडमिन दिखाएं
+                    }
+                  })
 
-                  if (!item.offlineDateTime) {
-                    dotClass = "dot-green";
-                    offlineFormatted = <span style={{ color: 'green', fontWeight: 'bold' }}>🟢 अभी ऑनलाइन है</span>;
+                  .map((item, index) => {
+                    const onlineDateObj = new Date(item.onlineDateTime);
+                    const onlineDateFormatted = onlineDateObj.toLocaleDateString();
+                    const onlineTimeFormatted = onlineDateObj.toLocaleTimeString();
 
-                    const diffMs = Date.now() - onlineDateObj.getTime();
-                    const totalSec = Math.floor(diffMs / 1000);
-                    durationText = <span style={{ color: 'green', fontWeight: 'bold' }}>{formatDuration(totalSec)}</span>;
-                  } else {
-                    const offlineDateObj = new Date(item.offlineDateTime);
-                    const isSameDay = onlineDateObj.toDateString() === offlineDateObj.toDateString();
-                    offlineFormatted = isSameDay ? offlineDateObj.toLocaleTimeString() : offlineDateObj.toLocaleString();
+                    let offlineFormatted = "";
+                    let durationText = "";
+                    let dotClass = "dot-black";
 
-                    const diffMs = offlineDateObj - onlineDateObj;
-                    const totalSec = Math.floor(diffMs / 1000);
-                    durationText = <b>{formatDuration(totalSec)}</b>;
-                  }
+                    if (!item.offlineDateTime) {
+                      dotClass = "dot-green";
+                      offlineFormatted = <span style={{ color: 'green', fontWeight: 'bold' }}>🟢 अभी ऑनलाइन है</span>;
 
-                  return (
-                    <tr key={item._id || index}>
-                      <td>{index + 1}</td>
-                      <td>{onlineDateFormatted}</td>
-                      <td><span className={dotClass}></span>{item.name || item.user_id}</td>
-                      <td>{item.address || 'उपलब्ध नहीं'}</td>
-                      <td>{item.mobile || 'उपलब्ध नहीं'}</td>
-                      <td>{item.productId}</td>
-                      <td>{onlineTimeFormatted}</td>
-                      <td>{offlineFormatted}</td>
-                      <td>{durationText}</td>
-                    </tr>
-                  );
-                })
+                      const diffMs = Date.now() - onlineDateObj.getTime();
+                      const totalSec = Math.floor(diffMs / 1000);
+                      durationText = <span style={{ color: 'green', fontWeight: 'bold' }}>{formatDuration(totalSec)}</span>;
+                    } else {
+                      const offlineDateObj = new Date(item.offlineDateTime);
+                      const isSameDay = onlineDateObj.toDateString() === offlineDateObj.toDateString();
+                      offlineFormatted = isSameDay ? offlineDateObj.toLocaleTimeString() : offlineDateObj.toLocaleString();
+
+                      const diffMs = offlineDateObj - onlineDateObj;
+                      const totalSec = Math.floor(diffMs / 1000);
+                      durationText = <b>{formatDuration(totalSec)}</b>;
+                    }
+
+                    return (
+                      <tr key={item._id || index}>
+                        <td>{index + 1}</td>
+                        <td>{onlineDateFormatted}</td>
+                        <td><span className={dotClass}></span>{item.name || item.user_id}</td>
+                        <td>{item.address || 'उपलब्ध नहीं'}</td>
+                        <td>{item.mobile || 'उपलब्ध नहीं'}</td>
+                        <td>{item.productId}</td>
+                        <td>{onlineTimeFormatted}</td>
+                        <td>{offlineFormatted}</td>
+                        <td>{durationText}</td>
+                      </tr>
+                    );
+                  })
               )}
 
             </tbody>
@@ -224,5 +263,3 @@ function App() {
 }
 
 export default App;
-
-
