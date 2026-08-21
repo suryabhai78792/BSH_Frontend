@@ -16,47 +16,52 @@ function App() {
   const initApp = () => {
     setIsLoading(true); // काम शुरू होने पर लोडिंग ऑन करें
     const token = localStorage.getItem('token');
-
     if (token) {
       setIsAuth(true);
-      // 1. तुरंत डेटा लोड करें और लोडिंग बंद करें ताकि यूआई तुरंत दिख जाए
       loadUserHistory();
-      setIsLoading(false);
-
-      // 2. सॉकेट कनेक्शन को बैकग्राउंड में कनेक्ट होने दें
-      // 3. पुराना सॉकेट बंद करके नया कनेक्ट करें
-      if (socketRef.current) {
-        socketRef.current.disconnect();
-      }
-
-      socketRef.current = io(API_BASE_URL, {
-        query: { token: token, productId: "Super_Admin_Panel" }
-      });
-
-      socketRef.current.on('connect', () => {
-        console.log("🟢 सुपर एडमिन सॉकेट कनेक्ट हो गया! ID:", socketRef.current.id);
-
-      });
-
-      // सॉकेट का रिफ्रेश लिसनर बैकग्राउंड में काम करता रहेगा
-      socketRef.current.on('refreshTable', () => {
-        loadUserHistory();
-      });
-
     } else {
-      setIsAuth(false);
-      setIsLoading(false);
+      setIsAuth(false);      
     }
+    setIsLoading(false);
   };
-
-  useEffect(() => {
-
-  }, []);
 
   // 1. ऐप पहली बार लोड होने पर यह चलेगा
   useEffect(() => {
     initApp();
   }, []);
+
+  // 🚀 बदलाव 2: यह नया useEffect जोड़ा गया है जो लॉगिन होते ही बैकग्राउंड में एक्टिव हो जाएगा
+  useEffect(() => {
+    if (!isAuth) return;
+    const token = localStorage.getItem('token');
+
+    // 2. सॉकेट कनेक्शन को बैकग्राउंड में कनेक्ट होने दें
+    // 3. पुराना सॉकेट बंद करके नया कनेक्ट करें
+    if (socketRef.current) {
+      socketRef.current.disconnect();
+    }
+
+    socketRef.current = io(API_BASE_URL, {
+      query: { token: token, productId: "Super_Admin_Panel" }
+    });
+
+    socketRef.current.on('connect', () => {
+      console.log("🟢 सुपर एडमिन सॉकेट कनेक्ट हो गया! ID:", socketRef.current.id);
+    });
+
+    // सॉकेट का रिफ्रेश लिसनर बैकग्राउंड में काम करता रहेगा
+    socketRef.current.on('refreshTable', () => {
+      console.log("🔄 रिफ्रेश टेबल का सिग्नल मिला!");
+      loadUserHistory();
+    });
+
+    // सफाई (Cleanup) जब यूजर लॉगआउट करे या कंपोनेंट हटे
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+      }
+    };
+  }, [isAuth]);
 
   // केवल क्लाइंट्स की हिस्ट्री फेच करने के लिए
   async function loadUserHistory() {

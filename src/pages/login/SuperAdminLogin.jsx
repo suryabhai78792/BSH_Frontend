@@ -1,17 +1,17 @@
-import React, { useState} from 'react';
-import {callApi } from '../../api';
+import React, { useState } from 'react';
+import { callApi } from '../../api';
 import './SuperAdminLogin.css';
 
-export default function SuperAdminLogin({onLoginSuccess}) {
+export default function SuperAdminLogin({ onLoginSuccess }) {
 
     const [userId, setUserId] = useState("");
     const [password, setPassword] = useState("");
-    const [error, setError] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
 
     // आपके मौजूदा लॉगिन API को कॉल करने का फंक्शन
     async function handleLogin(e) {
         e.preventDefault();
-        setError("");
+        setIsLoading(true);
         // यहाँ प्रोडक्ट आईडी को फिक्स कर दिया गया है (अब यूजर को नहीं डालना पड़ेगा)
         const product_id = "Business_Software_Hub";
         try {
@@ -31,11 +31,13 @@ export default function SuperAdminLogin({onLoginSuccess}) {
                     onLoginSuccess();
                 }
             } else {
-                setError(data?.message || "लॉगिन विफल रहा!");
+                alert(data?.message || "लॉगिन विफल रहा!"); // 👈 एरर स्टेट की बजाय डायरेक्ट अलर्ट
+                setIsLoading(false); // 👈 फेल होने पर लोडिंग बंद
             }
         } catch (err) {
             console.error("लॉगिन एरर:", err);
-            setError("सर्वर से कनेक्ट करने में समस्या आ रही है।");
+            alert("सर्वर से कनेक्ट करने में समस्या आ रही है।");
+            setIsLoading(false); // 👈 एरर आने पर लोडिंग बंद
         }
     }
 
@@ -63,7 +65,13 @@ export default function SuperAdminLogin({onLoginSuccess}) {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                     />
-                    <button type="submit">लॉगिन करें</button>
+                    <button
+                        type="submit"
+                        disabled={isLoading}
+                        className="w-full bg-blue-600 text-white py-3 rounded-md font-bold hover:bg-blue-700"
+                    >
+                        {isLoading ? 'लॉगिन हो रहा है...' : 'लॉगिन करें'}
+                    </button>
                 </form>
             </div>
 
