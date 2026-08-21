@@ -16,7 +16,7 @@ export async function callApi(endpoint, method = "GET", data = null, token = nul
             body: data ? JSON.stringify(data) : null
         };
 
-        const response = await fetch(`${BASE_URL}${endpoint}`, options);
+        const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
         const result = await response.json();
 
         return { ok: response.ok, data: result };
