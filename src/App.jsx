@@ -62,7 +62,7 @@ function App() {
       setHistoryDataList(prevList => {
         if (action === 'ADD') {
           // 🟢 अगर नया यूजर आया है, तो सूची में सबसे ऊपर या नीचे जोड़ दें
-          return [data, ...prevList];
+          return [...prevList, data];
         }
         else if (action === 'UPDATE') {
           // 🔄 अगर कोई यूजर अपडेट हुआ है (जैसे ऑफलाइन हुआ या पिंग बदला), तो उसी की आईडी मैच करके बदल दें
