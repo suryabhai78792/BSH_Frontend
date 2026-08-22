@@ -20,7 +20,7 @@ function App() {
       setIsAuth(true);
       loadUserHistory();
     } else {
-      setIsAuth(false);      
+      setIsAuth(false);
     }
     setIsLoading(false);
   };
@@ -46,15 +46,34 @@ function App() {
     });
 
     socketRef.current.on('connect', () => {
-     console.log(`⏱️ [${new Date().toLocaleTimeString()}] 🟢 सुपर एडमिन सॉकेट कनेक्ट हो गया!`);
+      console.log(`⏱️ [${new Date().toLocaleTimeString()}] 🟢 सुपर एडमिन सॉकेट कनेक्ट हो गया!`);
     });
 
     // सॉकेट का रिफ्रेश लिसनर बैकग्राउंड में काम करता रहेगा
-    socketRef.current.on('refreshTable', () => {
-      console.log(`⏱️ [${new Date().toLocaleTimeString()}] 🔄 [सिग्नल मिला] 'refreshTable' इवेंट रिसीव हुआ, टेबल लोड हो रही है...`);
-      loadUserHistory();
-    });
+    socketRef.current.on('refreshTable', ({ action, data }) => {
+      console.log(`⏱️ [${new Date().toLocaleTimeString()}] 🔄 [सिग्नल मिला] 'refreshTable' इवेंट आया, Action: ${action}`);
 
+      if (!data) {
+        // अगर डेटा नहीं आया (सुरक्षा के लिए), तो पूरा लोड कर लें
+        loadUserHistory();
+        return;
+      }
+
+      setHistoryDataList(prevList => {
+        if (action === 'ADD') {
+          // 🟢 अगर नया यूजर आया है, तो सूची में सबसे ऊपर या नीचे जोड़ दें
+          return [data, ...prevList];
+        }
+        else if (action === 'UPDATE') {
+          // 🔄 अगर कोई यूजर अपडेट हुआ है (जैसे ऑफलाइन हुआ या पिंग बदला), तो उसी की आईडी मैच करके बदल दें
+          return prevList.map(item =>
+            item._id === data._id ? data : item
+          );
+        }
+        return prevList;
+      });
+    });
+    
     // सफाई (Cleanup) जब यूजर लॉगआउट करे या कंपोनेंट हटे
     return () => {
       if (socketRef.current) {
